@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+    <template id="employment_contract_report_template">
+
+        <t t-call="web.basic_layout">
+
+            <t t-foreach="docs.sudo()" t-as="o">
+                <div class="page">
+                    <div id="container">
+                        <!-- Header -->
+                        <div>
+                            <div class="col-12 text-center">
+                                <img t-if="o.company_id.logo"
+                                    t-att-src="image_data_uri(o.company_id.logo)"
+                                    style="max-height: 70px;max-width:70px" alt="Logo" />
+                            </div>
+                            <div class="col-12 text-center">
+                                <h5 t-out="o.company_id.name" />
+                            </div>
+                        </div>
+                        <div class="mt-5">
+                            <span>Contract Reference: <t t-out="o.name" /></span>
+                            <span class="date-container">Date:<t
+                                    t-out="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d')" /></span>
+                        </div>
+                        <p class="mt-4 bold fs-20">
+                            <t t-out="o.employee_id.display_name" />
+                        </p>
+                        <p class="mt-3">[Facility name]</p>
+                        <p class="mt-3">Contract of Employment</p>
+                        <p class="mt-3">Dear <t t-out="o.employee_id.name" /></p>
+
+                        <p class="mt-3">We are pleased to set forth the terms of your assignment
+                            below:</p>
+
+                        <div class="dari">
+                            <p>قرارداد استخدامیه</p>
+                            <p>ما مسرت داریم که شرایط وظیفوی شما را قرار ذیل تنظیم کرده ایم:</p>
+                        </div>
+
+                        <div class="mt-4">
+                            <ul class="main">
+                                <li class="item">
+                                    <div>
+                                        <span class="bold"><span class="number"></span> - 1. Status</span>
+                                        <p>The present letter constitutes a Contract of Employment
+                                            with Aga Khan Health Service, Afghanistan (AKHS, A). We
+                                            understand that on the effective date of your assignment
+                                            you will be free from all obligations to any other
+                                            employer or contractor.</p>
+                                    </div>
+                                    <div class="dari">
+                                        <span class="bold">۱. وضعیت</span>
+                                        <p> نامه هذا ترکیب قرار داد کار با اداره خدمات صحی آقاخان در
+                                            افغانستانAKHS,A  میباشد. ما اینرا میدانیم که از تاریخ
+                                            آغاز کار (با ما) , شما فارغ از مکلفیت کاری با کارفرما
+                                            ویا قرار داد کننده دیگری هستید.</p>
+                                    </div>
+                                </li>
+                                <li class="item">
+                                    <div>
+                                        <span class="bold "><span class="number"></span> - 2.
+                                            Position</span>
+                                        <p>You will work as <strong>
+                                                <t t-out="o.job_id.name" />
+                                            </strong>
+                                            in <strong>
+                                                <t t-out="o.cost_center_id.name" />
+                                            </strong>,
+                                            AKHS Afghanistan. However, AKHS, A management reserves
+                                            the right to transfer you temporarily or permanently to
+                                            work anywhere in Afghanistan.</p>
+                                    </div>
+                                    <div class="dari">
+                                        <span class="bold ">۲. پست / سمت</span>
+                                        <p> شما به حیث <strong>
+                                                <t t-out="o.job_id.d_name" />
+                                            </strong>
+                                            مستقر در <strong>
+                                                <t t-out="o.cost_center_id.d_name" />
+                                            </strong>
+                                            AKHS, A افغانستان اجرای وظیفه میکنید. با آن هم اداره
+                                            AKHS, A این حق را به خود محفوظ میداند که شما را موقتا
+                                            ویا دایما برای کار در هر نقطه افغانستان اعزام کند. </p>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div>
+                                        <span class="bold ">3. Period of Assignment</span>
+                                        <p> You will take up your position effective <strong>
+                                                <t t-out="o.formatted_date(o.date_start)" />
+                                                <t t-if="o.date_end"> to <t
+                                                        t-out="o.formatted_date(o.date_end)" />
+                                                </t>
+                                            </strong>.
+                                            The contract later will be further extended subject to
+                                            the satisfactory performance and grant/donor funding
+                                            availability and extension of the project. The contract
+                                            is concluded as of grant and project closure. </p>
+                                    </div>
+                                    <div class="dari">
+                                        <span class="bold ">۳. دوره ماموریت / کاری</span>
+                                        <p> شما سمت پست تان را به تاریخ <strong>
+                                                <t t-out="o.gregorian_to_persian(o.date_start)" />
+                                                <t t-if="o.date_end"> الی <t
+                                                        t-out="o.gregorian_to_persian(o.date_end)" />
+                                                </t>
+                                            </strong>
+                                            میباشد. قرارداد ذیل بعد از ختم موفقانه دوره امتحانی و
+                                            مدت اعتبار و تمدید پروژه و موجودیت بودجه مطابق توافق که
+                                            با تمویل کننده صورت میگیرد میباشد و قرار داد شما بستگی
+                                            به تمدید پروژه دارد میباشد. </p>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div>
+                                        <span class="bold ">4. Probationary Period</span>
+                                        <p>
+                                            The first three month of your assignment will be a
+                                            probationary period in which either party may terminate
+                                            this Contract of Employment by giving one week written
+                                            advance notice to the other. Such notice may be given at
+                                            any time up to and including the last day of the trial
+                                            period. This probationary period may be extended at the
+                                            sole discretion of AKHS, A.
+                                        </p>
+                                    </div>
+                                    <div class="dari">
+                                        <span class="bold ">۴. دوره آزمایشی</span>
+                                        <p>
+                                            سه ماه نخست ماموریت کاری شما دوره آزمایشی به حساب میرود
+                                            که هردو طرفین میتوانند با فرستادن اطلاع کتبی یک هفته
+                                            قبل, قرار داد را فسخ کنند. چنین اطلاع میتواند در هر وقت
+                                            و زمان الی ویا بشمول اخرین روز دوره آزمایشی سپرده شود.
+                                            دوره آزمایشی میتواند صرف به لزوم دید AKHS,A تمدید گردد.
+                                        </p>
+                                    </div>
+                                </li>
+
+                            </ul>
+
+
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+
+
+    <record id="paperformat_contract_report" model="report.paperformat">
+        <field name="name">Paper format contract report</field>
+        <field name="format">A4</field>
+        <field name="page_height">0</field>
+        <field name="page_width">0</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">15</field>
+        <field name="margin_bottom">15</field>
+        <field name="margin_left">10</field>
+        <field name="margin_right">10</field>
+        <field name="header_line" eval="False" />
+        <field name="header_spacing">20</field>
+        <field name="dpi">90</field>
+    </record>
+
+
+    <record id="employment_contract_report" model="ir.actions.report">
+        <field name="name">Employment Contract</field>
+        <field name="model">hr.contract</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">nl_contract.employment_contract_report_template</field>
+        <field name="report_file">nl_contract.employment_contract_report_template</field>
+        <field name="print_report_name">
+            'Employment Contract for %s' % (object.name,)
+        </field>
+        <field name="binding_model_id" ref="model_hr_contract" />
+        <field name="paperformat_id" ref="paperformat_contract_report" />
+    </record>
+
+</odoo>
