@@ -1,10 +1,8 @@
 import React from "react";
-import { Dimensions, Text, View, Image, FlatList, ScrollView } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Dimensions, View, Image } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 
 const HeaderSlider = () => {
-
   const images = [
     { id: 1, source: require("../../assets/images/slider1.jpeg") },
     { id: 2, source: require("../../assets/images/slider2.jpeg") },
@@ -14,32 +12,29 @@ const HeaderSlider = () => {
   const width = Dimensions.get("window").width;
 
   return (
-    <ScrollView>
-      <Carousel
-        loop
-        width={width}
-        height={width / 2}
-        autoPlay={true}
-        data={images}
-        scrollAnimationDuration={2000}
-        onSnapToItem={(index) => console.log("current index:", index)}
-        renderItem={({ item }) => (
-          <View
-            style={{
-              flex: 1,
-              borderWidth: 1,
-              justifyContent: "center",
-            }}
-          >
-            <Image
-              style={{ width: "100%", height: "100%" }}
-              source={item.source}
-            />
-            {/* <Text style={{ textAlign: "center", fontSize: 30 }}>{item.id}</Text> */}
-          </View>
-        )}
-      />
-    </ScrollView>
+    <Carousel
+      loop
+      width={width}
+      height={width / 2}
+      autoPlay={true}
+      data={images}
+      scrollAnimationDuration={2000}
+      onSnapToItem={(index) => console.log("current index:", index)}
+      renderItem={({ item }) => (
+        <View
+          style={{
+            flex: 1,
+            borderWidth: 1,
+            justifyContent: "center",
+          }}
+        >
+          <Image
+            style={{ width: "100%", height: "100%" }}
+            source={item.source}
+          />
+        </View>
+      )}
+    />
   );
 };
 
