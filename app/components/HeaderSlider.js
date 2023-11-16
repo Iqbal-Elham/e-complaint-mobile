@@ -17,11 +17,11 @@ const HeaderSlider = () => {
       width={width}
       height={width / 2}
       autoPlay={true}
+      autoPlayInterval={3000}
       data={images}
-      scrollAnimationDuration={2000}
-      onSnapToItem={(index) => console.log("current index:", index)}
       renderItem={({ item }) => (
         <View
+          key={item.id}
           style={{
             flex: 1,
             borderWidth: 1,

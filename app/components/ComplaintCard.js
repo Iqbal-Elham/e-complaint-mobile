@@ -1,14 +1,23 @@
 import React, { useState } from "react";
 import { Link, Stack } from "expo-router";
-// import { Image } from "@bacons/react-views";
 import { View, Text, Image } from "react-native";
 import { Card, ListItem, Button, Icon } from "react-native-elements";
-// import ImageSlider from "react-native-image-slider";
-// import Video from "react-native-video";
 
 const ComplaintCard = () => {
   return (
-    <Card title="HELLO WORLD" image={require("../../assets/images/Bribe.jpg")}>
+    <Card 
+    title="HELLO WORLD" 
+    image={require("../../assets/images/Bribe.jpg")} 
+    containerStyle={{
+      borderRadius: 7,
+      shadowColor: '#171717',
+      shadowOffset: {width: -10, height: 10},
+      shadowOpacity: 0.2,
+      shadowRadius: 10,
+      padding: 20,
+      marginBottom: 15,
+    }}
+    >
       <Image
         style={{
           width: "100%",
@@ -21,7 +30,7 @@ const ComplaintCard = () => {
       <Text style={{ marginTop: 20, fontSize: 24, fontWeight: "bold" }}>
         شکایت اول
       </Text>
-      <Text style={{ marginVertical: 20 }}>
+      <Text style={{ marginVertical: 20, lineHeight: 25 }}>
         لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده
         از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و
         سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز و کاربردهای

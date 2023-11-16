@@ -1,9 +1,12 @@
 import React from 'react';
 import { Link } from 'expo-router';
 import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons'; // Make sure to install expo vector icons
 
 const BottomNavigation = () => {
+  const navigation = useNavigation();
+
   return (
     <View style={styles.container}>
       {/* Other navigation items */}
@@ -16,13 +19,12 @@ const BottomNavigation = () => {
       </TouchableOpacity> */}
 
       {/* Plus button in the middle */}
-     <Link
-     href={{ pathname: "ComplaintForm", params: { name: "ثبت شکایت جدید" } }}
-     >
-    <TouchableOpacity style={styles.plusButton}>
-        <AntDesign name="plus" size={24} color="white" />
-      </TouchableOpacity>
-     </Link>
+      <TouchableOpacity
+      style={styles.plusButton}
+      onPress={() => navigation.navigate('ComplaintForm', { name: 'ثبت شکایت جدید' })}
+    >
+      <AntDesign name="plus" size={24} color="white" />
+    </TouchableOpacity>
 
       {/* <TouchableOpacity style={styles.navItem}>
         <Text>Item 3</Text>

@@ -1,108 +1,245 @@
-import React, { useState } from 'react';
-import { View, TextInput, Text, Button, Picker, ScrollView } from 'react-native';
-import { Formik } from 'formik';
-import * as Yup from 'yup';
-import DocumentPicker from 'react-native-document-picker';
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  Picker,
+  Button,
+  ScrollView,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
+import * as ImagePicker from "expo-image-picker";
+import { MaterialIcons } from "@expo/vector-icons";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 
-const ComplaintForm = () => {
-  const [selectedFiles, setSelectedFiles] = useState([]);
+export default function ComplaintForm() {
+  const params = useLocalSearchParams();
 
-  const handleFileSelect = async () => {
-    try {
-      const results = await DocumentPicker.pickMultiple({
-        type: [DocumentPicker.types.allFiles],
-        allowMultiSelection: true,
-      });
+  const [formData, setFormData] = useState({
+    name: "",
+    phoneNumber: "",
+    email: "",
+    role: "",
+    description: "",
+    files: [],
+  });
 
-      // Limit to 4 files
-      setSelectedFiles(results.slice(0, 4));
-    } catch (err) {
-      if (DocumentPicker.isCancel(err)) {
-        // User cancelled the picker
-      } else {
-        throw err;
-      }
+  const handleInputChange = (name, value) => {
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsMultipleSelection: true,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+    if (!result.cancelled) {
+      setFormData({ ...formData, files: [...formData.files, result.uri] });
     }
   };
 
-  const validationSchema = Yup.object().shape({
-    name: Yup.string().required('Name is required'),
-    phoneNumber: Yup.string().required('Phone number is required'),
-    email: Yup.string().email('Invalid email').required('Email is required'),
-    bribeType: Yup.string().required('Please select an option'),
-    description: Yup.string().required('Description is required'),
-  });
+  const getFileTypeIcon = (uri) => {
+    const fileExtension = uri.split("/")[0];
+    switch (fileExtension) {
+      case "data:image":
+        return <Image source={{ uri: uri }} style={styles.imagePreview} />;
+      case "data:video":
+        return <MaterialIcons name="video-library" size={54} color="black" />;
+      case "data:audio":
+        return <MaterialIcons name="audiotrack" size={54} color="black" />;
+      default:
+        return (
+          <MaterialIcons name="insert-drive-file" size={54} color="black" />
+        );
+    }
+  };
+
+
+  const removeImage = (index) => {
+    const newFiles = formData.files.filter((_, idx) => idx !== index);
+    setFormData({ ...formData, files: newFiles });
+  };
+
+  const handleSubmit = () => {
+    console.log("Form Data:", formData);
+    // Submit your form data
+  };
 
   return (
-    <ScrollView>
-       <Stack.Screen
+    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+      <Stack.Screen
         options={{
           title: params.name,
+          headerTitleAlign: "center",
         }}
       />
-      <Formik
-        initialValues={{ name: '', phoneNumber: '', email: '', bribeType: '', description: '' }}
-        onSubmit={values => console.log(values)}
-        validationSchema={validationSchema}
-      >
-        {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
-          <View>
-            <TextInput
-              onChangeText={handleChange('name')}
-              onBlur={handleBlur('name')}
-              value={values.name}
-              placeholder="Name"
-            />
-            {touched.name && errors.name && <Text>{errors.name}</Text>}
+      <ScrollView style={styles.container}>
+        <View style={styles.formGroup}>
+          <Text style={styles.label}>نام:</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Name"
+            value={formData.name}
+            onChangeText={(text) => handleInputChange("name", text)}
+          />
+        </View>
 
-            <TextInput
-              onChangeText={handleChange('phoneNumber')}
-              onBlur={handleBlur('phoneNumber')}
-              value={values.phoneNumber}
-              placeholder="Phone Number"
-              keyboardType="phone-pad"
-            />
-            {touched.phoneNumber && errors.phoneNumber && <Text>{errors.phoneNumber}</Text>}
+        <View style={styles.formGroup}>
+          <Text style={styles.label}>Phone Number:</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Phone Number"
+            value={formData.phoneNumber}
+            onChangeText={(text) => handleInputChange("phoneNumber", text)}
+          />
+        </View>
 
-            <TextInput
-              onChangeText={handleChange('email')}
-              onBlur={handleBlur('email')}
-              value={values.email}
-              placeholder="Email"
-              keyboardType="email-address"
-            />
-            {touched.email && errors.email && <Text>{errors.email}</Text>}
+        <View style={styles.formGroup}>
+          <Text style={styles.label}>Email:</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            value={formData.email}
+            onChangeText={(text) => handleInputChange("email", text)}
+          />
+        </View>
 
-            <Picker
-              selectedValue={values.bribeType}
-              onValueChange={handleChange('bribeType')}
-            >
-              <Picker.Item label="Select Bribe Type" value="" />
-              <Picker.Item label="Bribe Taken" value="bribe_taken" />
-              <Picker.Item label="Bribe Given" value="bribe_given" />
-            </Picker>
-            {touched.bribeType && errors.bribeType && <Text>{errors.bribeType}</Text>}
+        <View style={styles.formGroup}>
+          <Text style={styles.label}>Type of Complaint:</Text>
+          <Picker
+            selectedValue={formData.role}
+            style={styles.picker}
+            onValueChange={(itemValue) => handleInputChange("role", itemValue)}
+          >
+            <Picker.Item style={{ backgroundColor: 'blue' }} label="Bribe Taker" value="bribeTaker" />
+            <Picker.Item label="Bribe Giver" value="bribeGiver" />
+          </Picker>
+        </View>
 
-            <TextInput
-              onChangeText={handleChange('description')}
-              onBlur={handleBlur('description')}
-              value={values.description}
-              placeholder="Description"
-              multiline
-            />
-            {touched.description && errors.description && <Text>{errors.description}</Text>}
+        <View style={styles.formGroup}>
+          <Text style={styles.label}>Description:</Text>
+          <TextInput
+            style={styles.textArea}
+            placeholder="Description"
+            multiline
+            numberOfLines={4}
+            value={formData.description}
+            onChangeText={(text) => handleInputChange("description", text)}
+          />
+        </View>
 
-            <Button title="Select Files" onPress={handleFileSelect} />
-            {selectedFiles.map((file, index) => (
-              <Text key={index}>{file.name}</Text>
-            ))}
-
-            <Button onPress={handleSubmit} title="Submit" />
-          </View>
+        {formData.files.length < 4 && (
+          <Button title="Pick an image from camera roll" onPress={pickImage} />
         )}
-      </Formik>
-    </ScrollView>
-  );
-};
 
-export default ComplaintForm;
+        <View style={styles.imagePreviewContainer}>
+          {formData.files.map((file, index) => (
+            <View key={index} style={styles.fileWrapper}>
+              <View style={styles.filePreview}>{getFileTypeIcon(file)}</View>
+              <TouchableOpacity
+                style={styles.deleteButton}
+                onPress={() => removeImage(index)}
+              >
+                <Text style={styles.deleteButtonText}>X</Text>
+              </TouchableOpacity>
+            </View>
+          ))}
+        </View>
+
+        <Button title="Submit" onPress={handleSubmit} />
+      </ScrollView>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 30,
+    margin: 20,
+    width: "90%",
+    backgroundColor: "white",
+    borderRadius: 10,
+  },
+  formGroup: {
+    marginBottom: 20,
+  },
+  label: {
+    marginBottom: 10,
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#ddd",
+    padding: 10,
+    borderRadius: 4,
+  },
+  picker: {
+    borderWidth: 1,
+    width: "75%",
+    borderColor: "#ddd",
+    borderRadius: 4,
+    paddingVertical: 10,
+    paddingHorizontal: 5
+  },
+  fileBtn: {
+    backgroundColor: 'yellow',
+  },
+  textArea: {
+    borderWidth: 1,
+    borderColor: "#ddd",
+    padding: 10,
+    borderRadius: 4,
+    height: 100,
+    textAlignVertical: "top",
+  },
+  imagePreviewContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-around",
+    paddingVertical: 20,
+  },
+  imageWrapper: {
+    position: "relative",
+    margin: 5,
+  },
+  imagePreview: {
+    width: 100,
+    height: 100,
+    borderRadius: 10,
+  },
+  fileWrapper: {
+    position: "relative",
+    margin: 5,
+  },
+
+  filePreview: {
+    width: 100,
+    height: 100,
+    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#e1e1e1", // A light grey background
+  },
+  deleteButton: {
+    position: "absolute",
+    right: 5,
+    top: 5,
+    backgroundColor: "red",
+    borderRadius: 15,
+    width: 30,
+    height: 30,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  deleteButtonText: {
+    color: "white",
+    fontWeight: "bold",
+  },
+});
