@@ -6,8 +6,11 @@ import HeaderSlider from "./components/HeaderSlider";
 import { I18nManager } from "react-native";
 import BottomNavigation from "./components/BottomNav";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import '../i18n'; 
+import { useTranslation } from 'react-i18next';
 
 function LogoTitle() {
+  
   return (
     <Image
       style={{ width: 50, height: 50 }}
@@ -20,6 +23,12 @@ export default function Home() {
   I18nManager.allowRTL(true);
   I18nManager.forceRTL(true);
 
+  const { t, i18n } = useTranslation();
+
+  const changeLanguage = (language) => {
+    i18n.changeLanguage(language);
+  };
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <View style={{ flex: 1 }}>
@@ -30,20 +39,24 @@ export default function Home() {
             headerTitleStyle: {
               fontWeight: "bold",
             },
-            headerTitle: (props) => <Text />,
+            headerTitle: () => <Text />,
             headerRight: () => (
-              <View style={{ marginRight: 25 }}>
+              <View style={{ marginRight: 25, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ color: 'white', marginHorizontal: 5 }}>{t('ministry_brand')}</Text>
+                <Text style={{ color: 'white', marginHorizontal: 5 }}>{t('save_complaint')}</Text>
+                </View>
                 <LogoTitle />
               </View>
             ),
             headerLeft: () => (
               <View style={{ marginLeft: 25 }}>
-                <Text style={{ color: "#fff" }}>پشتو | فارسی</Text>
+                <Text style={{ color: "#fff" }}><Text onPress={() => changeLanguage('ps')}>پشتو</Text> | <Text onPress={() => changeLanguage('fa')}>فارسی</Text></Text>
               </View>
             ),
           }}
         />
-        <ScrollView style={{ flex: 1, paddingBottom: 80 }}>
+        <ScrollView style={{ flex: 1, paddingBottom: 70 }}>
           <HeaderSlider />
           <Text
             style={{
@@ -56,9 +69,10 @@ export default function Home() {
               padding: 5,
               borderRadius: 10,
               color: "white",
+              borderBottomWidth: 2,
             }}
           >
-            شکایات
+            {t('complaints')}
           </Text>
           <ComplaintCard />
           <ComplaintCard />

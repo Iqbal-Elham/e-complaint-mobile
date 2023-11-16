@@ -1,0 +1,45 @@
+{
+  "newComplaint": "شکایت جدید",
+  "complaints": "شکایات",
+  "description": "توضیحات",
+  "title": "عنوان",
+  "view": "نمایش",
+  "complainer_name": "اسم شکایت کننده",
+  "complainer_email": "ایمل شکایت کننده",
+  "complainer_phone": "شماره تماس شکایت کننده",
+  "images": "تصاویر",
+  "name": "نام",
+  "phone_number": "شماره تماس",
+  "email": "ایمل",
+  "save": "ثبت",
+  "no_complaint": "شما هیج اعلانی ندارید",
+  "form_description": "لطفا جزییات موردی را که تماشا نموده اید بنویسد",
+  "upload_file": "اپلود فایل",
+
+  "placeholder_title": "عنوان شکایت را وارد نماید",
+  "placeholder_address": "آدرس خودرا را وارد نماید",
+  "placeholder_description": "توضیجات در مورد شکایت خویش را بیان نماید",
+
+  "ministry_brand": "وزارت امور داخله",
+  "save_complaint": "ثبت شکایات",
+
+  "placeholder_name": "اسم خودرا وارد نماید (اختیاری)",
+  "placeholder_email": "ایمل خودرا وارد نماید (اختیاری)",
+  "placeholder_phoneNumber": "شماره تماس خودرا وارد نماید (اختیاری)",
+  "complaint_type": "نوع شکایت خودرا انتخاب نماید",
+  "bribe_given": "درخواست رشوه",
+  "bribe_taken": "پرداخت رشوه",
+  "complaint_desc": "توضیجات شکایت",
+  "complaint_number": "شکایت شماره",
+  "unknown": "مشخص نشده",
+
+
+  "complaint_type_error": "لطفا یک نوع شکایت را انتخاب نماید",
+  "complaint_description_error": "توضیحات نمیتواند خالی باشد",
+  "complaint_file_error": "حد اقل یک فایل ضروری است",
+  "previous": "قبلی",
+  "next": "بعدی",
+  "no_complaint_exist": "هیج شکایتی وجود ندارد"
+
+
+}

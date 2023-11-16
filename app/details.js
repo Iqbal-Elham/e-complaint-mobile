@@ -14,6 +14,8 @@ import image1 from '../assets/images/Bribe.jpg';
 import image2 from '../assets/images/bribe2.jpg';
 import image3 from '../assets/images/Bribe.jpg';
 import image4 from '../assets/images/bribe2.jpg';
+import { useTranslation } from 'react-i18next';
+
 
 const complaint = {
   id: 2,
@@ -30,6 +32,7 @@ const complaint = {
 export default function Details() {
   const router = useRouter();
   const params = useLocalSearchParams();
+  const { t } = useTranslation();
 
   const [fullScreenImage, setFullScreenImage] = useState(null);
 
@@ -50,12 +53,12 @@ export default function Details() {
         }}
       />
       <ScrollView style={styles.container}>
-        <Text style={styles.title}>شکایت شماره {complaint.id}</Text>
-        <Text style={styles.info}>نوع شکایت: {complaint.type}</Text>
+        <Text style={styles.title}>{t('complaint_number')} {complaint.id}</Text>
+        <Text style={styles.info}>{complaint.type}</Text>
         <Text style={styles.description}>{complaint.description}</Text>
-        <Text style={styles.info}>اسم شکایت کننده: {complaint.name}</Text>
-        <Text style={styles.info}>ایمل شکایت کننده: {complaint.email}</Text>
-        <Text style={styles.info}>شماره تماس شکایت کننده: {complaint.phoneNumber}</Text>
+        <Text style={styles.info}>{t('complainer_name')}: {complaint.name}</Text>
+        <Text style={styles.info}>{t('complainer_email')}: {complaint.email}</Text>
+        <Text style={styles.info}>{t('complainer_phone')}: {complaint.phoneNumber}</Text>
 
         <View style={styles.imageContainer}>
           {complaint.images.map((image, index) => (
@@ -113,7 +116,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "gray",
     marginBottom: 10,
-    lineHeight: 25,
+    lineHeight: 20,
+    textAlign: 'justify',
   },
   imageContainer: {
     flexDirection: "row",

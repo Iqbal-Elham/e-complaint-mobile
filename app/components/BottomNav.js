@@ -3,9 +3,11 @@ import { Link } from 'expo-router';
 import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons'; // Make sure to install expo vector icons
+import { useTranslation } from 'react-i18next';
 
 const BottomNavigation = () => {
   const navigation = useNavigation();
+  const { t } = useTranslation()
 
   return (
     <View style={styles.container}>
@@ -21,7 +23,7 @@ const BottomNavigation = () => {
       {/* Plus button in the middle */}
       <TouchableOpacity
       style={styles.plusButton}
-      onPress={() => navigation.navigate('ComplaintForm', { name: 'ثبت شکایت جدید' })}
+      onPress={() => navigation.navigate('ComplaintForm', { name: t('newComplaint') })}
     >
       <AntDesign name="plus" size={24} color="white" />
     </TouchableOpacity>
@@ -41,10 +43,12 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     backgroundColor: '#0c84e0',
-    height: 60,
+    height: 50,
     alignItems: 'center',
     justifyContent: 'space-around',
     position: 'absolute',
+    borderTopRightRadius: 30,
+    borderTopLeftRadius: 30,
     left: 0,
     right: 0, 
     bottom: 0, 
@@ -61,11 +65,11 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     backgroundColor: '#0c84e0',
     borderColor: 'white',
-    borderWidth: 2,
+    borderWidth: 5,
     alignItems: 'center',
     justifyContent: 'center',
     position: 'absolute', 
-    bottom: 20,
+    bottom: 10,
     alignSelf: 'center',
   },
 });

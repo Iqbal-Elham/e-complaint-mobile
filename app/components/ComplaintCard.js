@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import { Link, Stack } from "expo-router";
 import { View, Text, Image } from "react-native";
 import { Card, ListItem, Button, Icon } from "react-native-elements";
+import { useTranslation } from 'react-i18next';
 
 const ComplaintCard = () => {
+  const { t } = useTranslation();
   return (
     <Card 
     title="HELLO WORLD" 
@@ -48,7 +50,7 @@ const ComplaintCard = () => {
           color: "white",
         }}
       >
-        مشاهده بیشتر
+        {t('view')}
       </Link>
     </Card>
   );

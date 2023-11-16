@@ -13,9 +13,12 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { useTranslation } from 'react-i18next';
+
 
 export default function ComplaintForm() {
   const params = useLocalSearchParams();
+  const { t } = useTranslation();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -80,52 +83,52 @@ export default function ComplaintForm() {
       />
       <ScrollView style={styles.container}>
         <View style={styles.formGroup}>
-          <Text style={styles.label}>نام:</Text>
+          <Text style={styles.label}>{t('name')}:</Text>
           <TextInput
             style={styles.input}
-            placeholder="Name"
+            placeholder={t('placeholder_name')}
             value={formData.name}
             onChangeText={(text) => handleInputChange("name", text)}
           />
         </View>
 
         <View style={styles.formGroup}>
-          <Text style={styles.label}>Phone Number:</Text>
+          <Text style={styles.label}>{t('phone_number')}:</Text>
           <TextInput
             style={styles.input}
-            placeholder="Phone Number"
+            placeholder={t('placeholder_phoneNumber')}
             value={formData.phoneNumber}
             onChangeText={(text) => handleInputChange("phoneNumber", text)}
           />
         </View>
 
         <View style={styles.formGroup}>
-          <Text style={styles.label}>Email:</Text>
+          <Text style={styles.label}>{t('email')}:</Text>
           <TextInput
             style={styles.input}
-            placeholder="Email"
+            placeholder={t('placeholder_email')}
             value={formData.email}
             onChangeText={(text) => handleInputChange("email", text)}
           />
         </View>
 
         <View style={styles.formGroup}>
-          <Text style={styles.label}>Type of Complaint:</Text>
+          <Text style={styles.label}>{t('complaint_type')}:</Text>
           <Picker
             selectedValue={formData.role}
             style={styles.picker}
             onValueChange={(itemValue) => handleInputChange("role", itemValue)}
           >
-            <Picker.Item style={{ backgroundColor: 'blue' }} label="Bribe Taker" value="bribeTaker" />
-            <Picker.Item label="Bribe Giver" value="bribeGiver" />
+            <Picker.Item style={{ backgroundColor: 'blue' }} label={t('bribe_given')} value="bribeTaker" />
+            <Picker.Item label={t('bribe_taken')} value="bribeGiver" />
           </Picker>
         </View>
 
         <View style={styles.formGroup}>
-          <Text style={styles.label}>Description:</Text>
+          <Text style={styles.label}>{t('description')}:</Text>
           <TextInput
             style={styles.textArea}
-            placeholder="Description"
+            placeholder={t('placeholder_description')}
             multiline
             numberOfLines={4}
             value={formData.description}
@@ -134,7 +137,7 @@ export default function ComplaintForm() {
         </View>
 
         {formData.files.length < 4 && (
-          <Button title="Pick an image from camera roll" onPress={pickImage} />
+          <Button title={t('upload_file')} onPress={pickImage} />
         )}
 
         <View style={styles.imagePreviewContainer}>
@@ -151,7 +154,7 @@ export default function ComplaintForm() {
           ))}
         </View>
 
-        <Button title="Submit" onPress={handleSubmit} />
+        <Button title={t('save')} onPress={handleSubmit} />
       </ScrollView>
     </View>
   );
@@ -161,13 +164,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 30,
-    margin: 20,
-    width: "90%",
+    width: "100%",
     backgroundColor: "white",
     borderRadius: 10,
   },
   formGroup: {
     marginBottom: 20,
+    borderBottomWidth: 0.5
   },
   label: {
     marginBottom: 10,
@@ -177,19 +180,18 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
     borderColor: "#ddd",
-    padding: 10,
+    padding: 15,
     borderRadius: 4,
+    textAlign: 'right'
   },
   picker: {
     borderWidth: 1,
-    width: "75%",
+    width: "100%",
     borderColor: "#ddd",
     borderRadius: 4,
     paddingVertical: 10,
-    paddingHorizontal: 5
-  },
-  fileBtn: {
-    backgroundColor: 'yellow',
+    paddingHorizontal: 5,
+    textAlign: 'right',
   },
   textArea: {
     borderWidth: 1,
@@ -197,6 +199,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 4,
     height: 100,
+    textAlign: 'right',
     textAlignVertical: "top",
   },
   imagePreviewContainer: {
