@@ -19,7 +19,7 @@ const HeaderSlider = () => {
       autoPlay={true}
       data={images}
       scrollAnimationDuration={2000}
-      onSnapToItem={(index) => console.log("current index:", index)}
+      // onSnapToItem={(index) => console.log("current index:", index)}
       renderItem={({ item }) => (
         <View
           style={{

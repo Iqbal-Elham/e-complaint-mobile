@@ -1,53 +1,105 @@
-import React, { useState } from "react";
-import { Link, Stack } from "expo-router";
-import { View, Text, Image } from "react-native";
-import { Card, ListItem, Button, Icon } from "react-native-elements";
+import React, { useState } from 'react';
+import { Link, Stack } from 'expo-router';
+import { View, Text, Image } from 'react-native';
+import { Card, ListItem, Button, Icon } from 'react-native-elements';
 import { useTranslation } from 'react-i18next';
+import { Video, ResizeMode } from 'expo-av';
+import { MaterialIcons } from '@expo/vector-icons';
+import { get_type } from '../utils';
 
-const ComplaintCard = () => {
+const ComplaintCard = ({ complaint }) => {
   const { t } = useTranslation();
+
+  const type = get_type(complaint?.attachments[0]?.file);
+
   return (
-    <Card 
-    title="HELLO WORLD" 
-    image={require("../../assets/images/Bribe.jpg")} 
-    containerStyle={{
-      borderRadius: 7,
-      shadowColor: '#171717',
-      shadowOffset: {width: -10, height: 10},
-      shadowOpacity: 0.2,
-      shadowRadius: 10,
-      padding: 20,
-      marginBottom: 15,
-    }}
+    <Card
+      containerStyle={{
+        borderRadius: 10,
+        shadowColor: '#171717',
+        shadowOffset: { width: -10, height: 10 },
+        shadowOpacity: 0.2,
+        shadowRadius: 10,
+        padding: 20,
+        marginBottom: 15,
+      }}
     >
-      <Image
+      {type === 'image' ? (
+        <Image
+          style={{
+            width: '100%',
+            height: 250,
+            marginHorizontal: 'auto',
+            display: 'flex',
+          }}
+          source={{ uri: complaint?.attachments[0]?.file }}
+        />
+      ) : type == 'video' ? (
+        <Video
+          style={{
+            width: 'auto',
+            height: 360,
+            borderRadius: 10,
+            backgroundColor: '#000',
+          }}
+          source={{
+            uri: complaint?.attachments[0]?.file,
+          }}
+          useNativeControls
+          resizeMode={ResizeMode.CONTAIN}
+          isLooping
+        />
+      ) : type === 'audio' ? (
+        <View
+          style={{
+            minHeight: 250,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor:'#2222',
+            borderRadius: 10
+          }}
+        >
+          <MaterialIcons name="audiotrack" size={148} color="black" />
+        </View>
+      ) : (
+        <View
+          style={{
+            minHeight: 250,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor:'#2222',
+            borderRadius: 10
+          }}
+        >
+
+          <MaterialIcons name="insert-drive-file" size={148} color="black" />
+        </View>
+      )}
+      <View
         style={{
-          width: "100%",
-          height: 250,
-          marginHorizontal: "auto",
-          display: "flex",
+          overflow: 'hidden',
         }}
-        source={require("../../assets/images/Bribe.jpg")}
-      />
-      <Text style={{ marginTop: 20, fontSize: 24, fontWeight: "bold" }}>
-        شکایت اول
+      ></View>
+      <Text style={{ marginTop: 20, fontSize: 24, fontWeight: 'bold' }}>
+        {t(complaint?.complaint_type)}
       </Text>
       <Text style={{ marginVertical: 20, lineHeight: 25 }}>
-        لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده
-        از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و
-        سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز و کاربردهای
-        متنوع با هدف بهبود ابزارهای کاربردی می باشد. کتابهای زیادی در شصت و سه
-        درصد گذشته،
+        {complaint?.description}
       </Text>
       <Link
-        href={{ pathname: "details", params: { name: "شکایت اول" } }}
+        href={{
+          pathname: 'details',
+          params: { name: 'شکایت اول', complaint_id: complaint.id },
+        }}
         style={{
-          textAlign: "center",
+          textAlign: 'center',
           fontSize: 18,
-          backgroundColor: "#0c84e0",
+          backgroundColor: '#0c84e0',
           padding: 10,
           borderRadius: 10,
-          color: "white",
+          color: 'white',
         }}
       >
         {t('view')}

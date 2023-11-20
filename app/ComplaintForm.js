@@ -1,33 +1,41 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   View,
   Text,
   TextInput,
-  Picker,
   Button,
   ScrollView,
   Image,
   StyleSheet,
   TouchableOpacity,
-} from "react-native";
-import * as ImagePicker from "expo-image-picker";
-import { MaterialIcons } from "@expo/vector-icons";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+} from 'react-native';
+import { Picker } from '@react-native-picker/picker';
+import * as ImagePicker from 'expo-image-picker';
+import { MaterialIcons } from '@expo/vector-icons';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-
+import { api, createComplaint, fetchFileFromUri } from './api';
+import axios from 'axios';
+import { get_type } from './utils';
 
 export default function ComplaintForm() {
   const params = useLocalSearchParams();
   const { t } = useTranslation();
+  const [errors, setErrors] = useState({
+    complaint_description_error: false,
+    complaint_file_error: false,
+  });
+  const router = useRouter();
 
   const [formData, setFormData] = useState({
-    name: "",
-    phoneNumber: "",
-    email: "",
-    role: "",
-    description: "",
+    name: '',
+    phone_number: '',
+    email: '',
+    complaint_type: 'bribe_given',
+    description: '',
     files: [],
   });
+  const files_form = new FormData();
 
   const handleInputChange = (name, value) => {
     setFormData({ ...formData, [name]: value });
@@ -36,24 +44,26 @@ export default function ComplaintForm() {
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsMultipleSelection: true,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
-    if (!result.cancelled) {
-      setFormData({ ...formData, files: [...formData.files, result.uri] });
+    if (!result.canceled) {
+      setFormData({
+        ...formData,
+        files: [...formData.files, result.assets[0]],
+      });
     }
   };
 
-  const getFileTypeIcon = (uri) => {
-    const fileExtension = uri.split("/")[0];
+  const getFileTypeIcon = ({ uri }) => {
+    const fileExtension = get_type(uri);
     switch (fileExtension) {
-      case "data:image":
+      case 'image':
         return <Image source={{ uri: uri }} style={styles.imagePreview} />;
-      case "data:video":
+      case 'video':
         return <MaterialIcons name="video-library" size={54} color="black" />;
-      case "data:audio":
+      case 'file':
         return <MaterialIcons name="audiotrack" size={54} color="black" />;
       default:
         return (
@@ -62,23 +72,63 @@ export default function ComplaintForm() {
     }
   };
 
-
   const removeImage = (index) => {
     const newFiles = formData.files.filter((_, idx) => idx !== index);
     setFormData({ ...formData, files: newFiles });
   };
 
   const handleSubmit = () => {
-    console.log("Form Data:", formData);
+    Object.keys(errors).map((key) => (errors[key] = false));
+    if (!formData.description) {
+      setErrors((errors) => ({ ...errors, complaint_description_error: true }));
+    }
+    if (!formData.files.length) {
+      setErrors((errors) => ({ ...errors, complaint_file_error: true }));
+    }
+    if (!errors.complaint_description_error && !errors.complaint_file_error) {
+      formData.files.map((file) => {
+        let fileType = file.uri.substring(file.uri.lastIndexOf('.') + 1);
+
+        files_form.append('attachments', {
+          uri: file?.uri,
+          name: `photo.${fileType}`,
+          type: `image/${fileType}`,
+        });
+      });
+      console.log('--------325453-----------------------');
+      console.log(files_form);
+      console.log('--------3243-----------------------');
+
+      files_form.append('complaint_type', 'bribe_taken');
+      files_form.append('description', 'jjj');
+      axios
+        .post('http://172.30.10.104:8000/api/complaints/', files_form, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        })
+        .then(
+          (response) => {
+            if (response.status === 201) {
+              router.replace('/');
+            } else {
+              console.log(response);
+              console.log('Heeyyyyyyyyy');
+            }
+          },
+          (error) => {
+            console.log('errororororo');
+            console.log(error);
+          }
+        );
+    }
     // Submit your form data
   };
 
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Stack.Screen
         options={{
           title: params.name,
-          headerTitleAlign: "center",
+          headerTitleAlign: 'center',
         }}
       />
       <ScrollView style={styles.container}>
@@ -88,7 +138,7 @@ export default function ComplaintForm() {
             style={styles.input}
             placeholder={t('placeholder_name')}
             value={formData.name}
-            onChangeText={(text) => handleInputChange("name", text)}
+            onChangeText={(text) => handleInputChange('name', text)}
           />
         </View>
 
@@ -97,8 +147,8 @@ export default function ComplaintForm() {
           <TextInput
             style={styles.input}
             placeholder={t('placeholder_phoneNumber')}
-            value={formData.phoneNumber}
-            onChangeText={(text) => handleInputChange("phoneNumber", text)}
+            value={formData.phone_number}
+            onChangeText={(text) => handleInputChange('phone_number', text)}
           />
         </View>
 
@@ -108,19 +158,21 @@ export default function ComplaintForm() {
             style={styles.input}
             placeholder={t('placeholder_email')}
             value={formData.email}
-            onChangeText={(text) => handleInputChange("email", text)}
+            onChangeText={(text) => handleInputChange('email', text)}
           />
         </View>
 
         <View style={styles.formGroup}>
           <Text style={styles.label}>{t('complaint_type')}:</Text>
           <Picker
-            selectedValue={formData.role}
+            selectedValue={formData.complaint_type}
             style={styles.picker}
-            onValueChange={(itemValue) => handleInputChange("role", itemValue)}
+            onValueChange={(itemValue) =>
+              handleInputChange('complaint_type', itemValue)
+            }
           >
-            <Picker.Item style={{ backgroundColor: 'blue' }} label={t('bribe_given')} value="bribeTaker" />
-            <Picker.Item label={t('bribe_taken')} value="bribeGiver" />
+            <Picker.Item label={t('bribe_given')} value="bribe_given" />
+            <Picker.Item label={t('bribe_taken')} value="bribe_taken" />
           </Picker>
         </View>
 
@@ -132,12 +184,22 @@ export default function ComplaintForm() {
             multiline
             numberOfLines={4}
             value={formData.description}
-            onChangeText={(text) => handleInputChange("description", text)}
+            onChangeText={(text) => handleInputChange('description', text)}
           />
         </View>
+        {errors.complaint_description_error && (
+          <Text style={{ color: 'red', marginBottom: 20 }}>
+            {t('complaint_description_error')}
+          </Text>
+        )}
 
         {formData.files.length < 4 && (
           <Button title={t('upload_file')} onPress={pickImage} />
+        )}
+        {errors.complaint_file_error && (
+          <Text style={{ color: 'red', marginTop: 10 }}>
+            {t('complaint_file_error')}
+          </Text>
         )}
 
         <View style={styles.imagePreviewContainer}>
@@ -154,7 +216,9 @@ export default function ComplaintForm() {
           ))}
         </View>
 
-        <Button title={t('save')} onPress={handleSubmit} />
+        <View style={{ marginBottom: 60 }}>
+          <Button title={t('save')} onPress={handleSubmit} />
+        </View>
       </ScrollView>
     </View>
   );
@@ -164,30 +228,30 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 30,
-    width: "100%",
-    backgroundColor: "white",
+    width: '100%',
+    backgroundColor: 'white',
     borderRadius: 10,
   },
   formGroup: {
     marginBottom: 20,
-    borderBottomWidth: 0.5
+    borderBottomWidth: 0.5,
   },
   label: {
     marginBottom: 10,
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   input: {
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: '#ddd',
     padding: 15,
     borderRadius: 4,
-    textAlign: 'right'
+    textAlign: 'right',
   },
   picker: {
     borderWidth: 1,
-    width: "100%",
-    borderColor: "#ddd",
+    width: '100%',
+    borderColor: '#ddd',
     borderRadius: 4,
     paddingVertical: 10,
     paddingHorizontal: 5,
@@ -195,21 +259,21 @@ const styles = StyleSheet.create({
   },
   textArea: {
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: '#ddd',
     padding: 10,
     borderRadius: 4,
     height: 100,
     textAlign: 'right',
-    textAlignVertical: "top",
+    textAlignVertical: 'top',
   },
   imagePreviewContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-around",
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-around',
     paddingVertical: 20,
   },
   imageWrapper: {
-    position: "relative",
+    position: 'relative',
     margin: 5,
   },
   imagePreview: {
@@ -218,7 +282,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   fileWrapper: {
-    position: "relative",
+    position: 'relative',
     margin: 5,
   },
 
@@ -226,23 +290,23 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#e1e1e1", // A light grey background
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#e1e1e1', // A light grey background
   },
   deleteButton: {
-    position: "absolute",
+    position: 'absolute',
     right: 5,
     top: 5,
-    backgroundColor: "red",
+    backgroundColor: 'red',
     borderRadius: 15,
     width: 30,
     height: 30,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   deleteButtonText: {
-    color: "white",
-    fontWeight: "bold",
+    color: 'white',
+    fontWeight: 'bold',
   },
 });
