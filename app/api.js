@@ -1,13 +1,22 @@
 import axios from 'axios';
+import { get_type } from './utils';
 
 const api = axios.create({
-  baseURL: 'http://172.30.10.104:8000/api/',
+  baseURL: 'http://172.20.10.11:8000/api/',
   headers: { Accept: 'application/json' },
 });
 
-const fetchComplaints = async () => {
-  const response = await api.get('complaints/');
-  return response.data;
+const fetchComplaints = async (itemsPerPage, currentPage) => {
+  try {
+    const response = await api.get(
+      `complaints/?limit=${itemsPerPage}&offset=${
+        (currentPage - 1) * itemsPerPage
+      }`
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const fetchComplaint = async (id) => {
@@ -24,17 +33,17 @@ const fetchFileFromUri = async (uri) => {
 async function createFormData(data) {
   const formData = new FormData();
   const files = data['files'];
-  for (let i = 0; i < files.length; i++) {
-    // const file_blob = await fetchFileFromUri(files[i]);
+  files.map((file) => {
+    let fileType = file.uri.substring(file.uri.lastIndexOf('.') + 1);
+
+    let type = get_type(file.uri) ?? 'file';
+
     formData.append('attachments', {
-      name: files[i].fileName,
-      type: files[i].type,
-      uri:
-        Platform.OS === 'ios'
-          ? files[i].uri.replace('file://', '')
-          : files[i].uri,
+      uri: file?.uri,
+      name: `photo.${fileType}`,
+      type: `${type}/${fileType}`,
     });
-  }
+  });
   delete data['files'];
   Object.entries(data).map(([key, value]) => {
     formData.append(key, value);
@@ -43,17 +52,14 @@ async function createFormData(data) {
 }
 
 const createComplaint = async (rawData) => {
-  console.log(rawData);
   const data = await createFormData(rawData);
-  console.log(data);
   try {
     const response = await axios.post(`complaints/`, data, {
-      baseURL: 'http://172.30.10.104:8000/api/',
+      baseURL: 'http://172.20.10.11:8000/api/',
       headers: {
         'Content-Type': 'multipart/form-data',
       },
     });
-    console.log('-----------------------------', response);
 
     return response;
   } catch (error) {

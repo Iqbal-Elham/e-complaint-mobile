@@ -14,17 +14,13 @@ import * as ImagePicker from 'expo-image-picker';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { api, createComplaint, fetchFileFromUri } from './api';
-import axios from 'axios';
+import { createComplaint } from './api';
 import { get_type } from './utils';
 
 export default function ComplaintForm() {
   const params = useLocalSearchParams();
   const { t } = useTranslation();
-  const [errors, setErrors] = useState({
-    complaint_description_error: false,
-    complaint_file_error: false,
-  });
+  const [errors, setErrors] = useState({});
   const router = useRouter();
 
   const [formData, setFormData] = useState({
@@ -35,7 +31,6 @@ export default function ComplaintForm() {
     description: '',
     files: [],
   });
-  const files_form = new FormData();
 
   const handleInputChange = (name, value) => {
     setFormData({ ...formData, [name]: value });
@@ -73,54 +68,49 @@ export default function ComplaintForm() {
   };
 
   const removeImage = (index) => {
-    const newFiles = formData.files.filter((_, idx) => idx !== index);
+    const newFiles = formData.files?.filter((_, idx) => idx !== index);
     setFormData({ ...formData, files: newFiles });
   };
 
   const handleSubmit = () => {
-    Object.keys(errors).map((key) => (errors[key] = false));
+    setErrors({});
+    const emailRegex =
+      /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+    const afghanistanPhoneRegex = /^07\d{8}$/
+
+    let newErrors = {};
+    if (formData.email) {
+      if (!formData.email.match(emailRegex))
+        newErrors = { ...newErrors, complaint_email_error: true };
+    }
+    if (formData.phone_number) {
+      if (!formData.phone_number.match(afghanistanPhoneRegex))
+        newErrors = { ...newErrors, complaint_phone_number_error: true };
+    }
     if (!formData.description) {
-      setErrors((errors) => ({ ...errors, complaint_description_error: true }));
+      newErrors = { ...newErrors, complaint_description_error: true };
     }
     if (!formData.files.length) {
-      setErrors((errors) => ({ ...errors, complaint_file_error: true }));
+      newErrors = { ...newErrors, complaint_file_error: true };
     }
-    if (!errors.complaint_description_error && !errors.complaint_file_error) {
-      formData.files.map((file) => {
-        let fileType = file.uri.substring(file.uri.lastIndexOf('.') + 1);
 
-        files_form.append('attachments', {
-          uri: file?.uri,
-          name: `photo.${fileType}`,
-          type: `image/${fileType}`,
-        });
-      });
-      console.log('--------325453-----------------------');
-      console.log(files_form);
-      console.log('--------3243-----------------------');
+    setErrors(newErrors);
 
-      files_form.append('complaint_type', 'bribe_taken');
-      files_form.append('description', 'jjj');
-      axios
-        .post('http://172.30.10.104:8000/api/complaints/', files_form, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        })
-        .then(
-          (response) => {
-            if (response.status === 201) {
-              router.replace('/');
-            } else {
-              console.log(response);
-              console.log('Heeyyyyyyyyy');
-            }
-          },
-          (error) => {
-            console.log('errororororo');
-            console.log(error);
+    // Only proceed if there are no errors
+    if (Object.keys(newErrors).length < 1) {
+      createComplaint(formData).then(
+        (response) => {
+          if (response.status === 201) {
+            router.replace('/');
+          } else {
+            console.log(response);
           }
-        );
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
     }
-    // Submit your form data
   };
 
   return (
@@ -151,6 +141,11 @@ export default function ComplaintForm() {
             onChangeText={(text) => handleInputChange('phone_number', text)}
           />
         </View>
+        {errors.complaint_phone_number_error && (
+          <Text style={{ color: 'red', marginBottom: 20 ,alignSelf:'fle'}}>
+            {t('complaint_phone_number_error')}
+          </Text>
+        )}
 
         <View style={styles.formGroup}>
           <Text style={styles.label}>{t('email')}:</Text>
@@ -161,6 +156,11 @@ export default function ComplaintForm() {
             onChangeText={(text) => handleInputChange('email', text)}
           />
         </View>
+        {errors.complaint_email_error && (
+          <Text style={{ color: 'red', marginBottom: 20 }}>
+            {t('complaint_email_error')}
+          </Text>
+        )}
 
         <View style={styles.formGroup}>
           <Text style={styles.label}>{t('complaint_type')}:</Text>
@@ -193,7 +193,7 @@ export default function ComplaintForm() {
           </Text>
         )}
 
-        {formData.files.length < 4 && (
+        {formData.files?.length < 4 && (
           <Button title={t('upload_file')} onPress={pickImage} />
         )}
         {errors.complaint_file_error && (
@@ -203,7 +203,7 @@ export default function ComplaintForm() {
         )}
 
         <View style={styles.imagePreviewContainer}>
-          {formData.files.map((file, index) => (
+          {formData.files?.map((file, index) => (
             <View key={index} style={styles.fileWrapper}>
               <View style={styles.filePreview}>{getFileTypeIcon(file)}</View>
               <TouchableOpacity

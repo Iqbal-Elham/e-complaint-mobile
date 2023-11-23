@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
-import { Link, Stack } from 'expo-router';
+import React, { useEffect } from 'react';
+import { Link } from 'expo-router';
 import { View, Text, Image } from 'react-native';
-import { Card, ListItem, Button, Icon } from 'react-native-elements';
+import { Card } from 'react-native-elements';
 import { useTranslation } from 'react-i18next';
 import { Video, ResizeMode } from 'expo-av';
 import { MaterialIcons } from '@expo/vector-icons';
 import { get_type } from '../utils';
 
-const ComplaintCard = ({ complaint }) => {
+const ComplaintCard = ({ complaint, updateComplaintViews }) => {
   const { t } = useTranslation();
 
   const type = get_type(complaint?.attachments[0]?.file);
@@ -56,8 +56,8 @@ const ComplaintCard = ({ complaint }) => {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            backgroundColor:'#2222',
-            borderRadius: 10
+            backgroundColor: '#2222',
+            borderRadius: 10,
           }}
         >
           <MaterialIcons name="audiotrack" size={148} color="black" />
@@ -69,11 +69,10 @@ const ComplaintCard = ({ complaint }) => {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            backgroundColor:'#2222',
-            borderRadius: 10
+            backgroundColor: '#2222',
+            borderRadius: 10,
           }}
         >
-
           <MaterialIcons name="insert-drive-file" size={148} color="black" />
         </View>
       )}
@@ -82,17 +81,43 @@ const ComplaintCard = ({ complaint }) => {
           overflow: 'hidden',
         }}
       ></View>
-      <Text style={{ marginTop: 20, fontSize: 24, fontWeight: 'bold' }}>
-        {t(complaint?.complaint_type)}
-      </Text>
+      <View
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          marginTop: 20,
+          alignItems: 'center',
+        }}
+      >
+        <Text style={{ fontSize: 24, fontWeight: 'bold' }}>
+          {t(complaint?.complaint_type)}
+        </Text>
+        <View
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 4,
+          }}
+        >
+          <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
+            {complaint?.views}
+          </Text>
+          <MaterialIcons name="remove-red-eye" size={18} color="black" />
+        </View>
+      </View>
       <Text style={{ marginVertical: 20, lineHeight: 25 }}>
-        {complaint?.description}
+        {complaint?.description.length > 300
+          ? complaint?.description.substring(0, 300) + ' ...'
+          : complaint?.description}
       </Text>
       <Link
         href={{
           pathname: 'details',
           params: { name: 'شکایت اول', complaint_id: complaint.id },
         }}
+        onPress={()=>updateComplaintViews(complaint.id)}
         style={{
           textAlign: 'center',
           fontSize: 18,

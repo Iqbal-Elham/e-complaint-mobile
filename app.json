@@ -8,6 +8,17 @@
       "expo-router"
     ],
     "name": "e-complaint-mobile",
-    "slug": "e-complaint-mobile"
+    "slug": "e-complaint-mobile",
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "c83d054b-ddfe-4718-8128-806607c3f8c1"
+      }
+    },
+    "android": {
+      "package": "af.ecomplaint.app"
+    }
   }
 }

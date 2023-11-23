@@ -33,13 +33,12 @@
   "complaint_number": "شکایت شماره",
   "unknown": "مشخص نشده",
 
-
   "complaint_type_error": "لطفا یک نوع شکایت را انتخاب نماید",
+  "complaint_email_error": "لطفا ایمل خودرا درست وارد نماید",
+  "complaint_phone_number_error": "07xxxxxxxx شماره باید اینگونه باشد",
   "complaint_description_error": "توضیحات نمیتواند خالی باشد",
   "complaint_file_error": "حد اقل یک فایل ضروری است",
   "previous": "قبلی",
   "next": "بعدی",
   "no_complaint_exist": "هیج شکایتی وجود ندارد"
-
-
 }

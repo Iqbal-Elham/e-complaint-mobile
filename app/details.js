@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { Stack, useLocalSearchParams } from 'expo-router';
 import {
   View,
   Text,
@@ -9,26 +9,15 @@ import {
   TouchableOpacity,
   Modal,
 } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 
-import image1 from '../assets/images/Bribe.jpg';
-import image2 from '../assets/images/bribe2.jpg';
-import image3 from '../assets/images/Bribe.jpg';
-import image4 from '../assets/images/bribe2.jpg';
 import { useTranslation } from 'react-i18next';
+import { Video, ResizeMode } from 'expo-av';
 import { fetchComplaint } from './api';
-
-// const complaint = {
-//   id: 2,
-//   name: 'علی احمد',
-//   type: 'پرداخت رشوه',
-//   phoneNumber: '123-456-7890',
-//   email: 'example@example.com',
-//   description: `لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد. کتابهای زیادی در شصت و سه درصد گذشته، حال و آینده شناخت فراوان جامعه و متخصصان را می طلبد`,
-//   images: [image1, image2, image3, image4],
-// };
+import { get_type } from './utils';
 
 export default function Details() {
-  const { name, complaint_id } = useLocalSearchParams();
+  const { complaint_id } = useLocalSearchParams();
   const { t } = useTranslation();
 
   const [complaint, setComplaint] = useState({});
@@ -49,6 +38,79 @@ export default function Details() {
     });
   }, []);
 
+  function getAttachmentComponent(file, fullScreen = false) {
+    const type = get_type(file);
+    if (type === 'image')
+      return (
+        <Image
+          source={{ uri: file }}
+          style={fullScreen ? styles.fullScreenImage : styles.image}
+        />
+      );
+    else if (fullScreen) {
+      if (['video', 'audio'].includes(type))
+        return (
+          <Video
+            style={{
+              width: fullScreen ? '100%' : 100,
+              height: fullScreen ? '100%' : 100,
+              borderRadius: 10,
+              backgroundColor: '#000',
+            }}
+            source={{
+              uri: file,
+            }}
+            useNativeControls={fullScreen}
+            resizeMode={ResizeMode.CONTAIN}
+            isLooping={fullScreen}
+          />
+        );
+      else
+        return (
+          <View
+            style={{
+              minHeight: 250,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: '#2222',
+              borderRadius: 10,
+            }}
+          >
+            <MaterialIcons name="insert-drive-file" size={148} color="black" />
+          </View>
+        );
+    } else {
+      return (
+        <View
+          style={{
+            height: 100,
+            width: 100,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: '#2222',
+            borderRadius: 10,
+          }}
+        >
+          <MaterialIcons
+            name={
+              type === 'video'
+                ? 'videocam'
+                : type === 'audio'
+                ? 'mic'
+                : 'insert-drive-file'
+            }
+            size={80}
+            color="black"
+          />
+        </View>
+      );
+    }
+  }
+
+  console.log(complaint)
+
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Stack.Screen
@@ -58,9 +120,33 @@ export default function Details() {
         }}
       />
       <ScrollView style={styles.container}>
-        <Text style={styles.title}>
-          {t('complaint_number')} {complaint.id}
-        </Text>
+        <View
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: 20,
+          }}
+        >
+          <Text style={styles.title}>
+            {t('complaint_number')} {complaint.id}
+          </Text>
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 4,
+            }}
+          >
+            <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
+              {complaint?.views}
+            </Text>
+            <MaterialIcons name="remove-red-eye" size={18} color="black" />
+          </View>
+        </View>
+
         <Text style={styles.info}>{t(complaint.complaint_type)}</Text>
         <Text style={styles.description}>{complaint.description}</Text>
         <Text style={styles.info}>
@@ -82,7 +168,7 @@ export default function Details() {
               key={index}
               onPress={() => openImage(attachment.file)}
             >
-              <Image source={{ uri: attachment.file }} style={styles.image} />
+              {getAttachmentComponent(attachment.file)}
             </TouchableOpacity>
           ))}
         </View>
@@ -92,15 +178,15 @@ export default function Details() {
           transparent={true}
           onRequestClose={closeImage}
         >
-          <TouchableOpacity
-            style={styles.fullScreenContainer}
-            onPress={closeImage}
-          >
-            <Image
-              source={{ uri: fullScreenImage }}
-              style={styles.fullScreenImage}
-            />
-          </TouchableOpacity>
+          <View style={styles.fullScreenContainer}>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => closeImage()}
+            >
+              <Text style={styles.closeButtonText}>X</Text>
+            </TouchableOpacity>
+            {getAttachmentComponent(fullScreenImage, true)}
+          </View>
         </Modal>
       </ScrollView>
     </View>
@@ -124,7 +210,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 20,
   },
   info: {
     fontSize: 18,
@@ -143,6 +228,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'space-between',
     marginTop: 20,
+    width: '100%',
   },
   image: {
     width: 100,
@@ -160,5 +246,22 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     resizeMode: 'contain',
+  },
+  closeButton: {
+    position: 'absolute',
+    left: 10,
+    top: 40,
+    borderRadius: 20,
+    backgroundColor: '#111e',
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 100,
+  },
+  closeButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });

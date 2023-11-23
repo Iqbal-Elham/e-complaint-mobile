@@ -9,6 +9,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import '../i18n';
 import { useTranslation } from 'react-i18next';
 import { fetchComplaints } from './api';
+import Pagination from './components/Pagination';
 
 function LogoTitle() {
   return (
@@ -24,6 +25,11 @@ export default function Home() {
   I18nManager.forceRTL(true);
 
   const [complaints, setComplaints] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [hasPrev, setHasPrev] = useState(false);
+  const [hasNext, setHasNext] = useState(false);
+  const itemsPerPage = 6;
 
   const { t, i18n } = useTranslation();
 
@@ -32,10 +38,26 @@ export default function Home() {
   };
 
   useEffect(() => {
-    fetchComplaints().then((response) => {
-      setComplaints(response.results);
-    });
-  }, []);
+    fetchComplaints(itemsPerPage, currentPage)
+      .then((response) => {
+        setComplaints(response?.results);
+        setHasPrev(response?.previous);
+        setHasNext(response?.next);
+        setTotalPages(Math.ceil(response?.count / itemsPerPage));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [currentPage]);
+
+  const handleComplaintViewUpdate = (id) => {
+    const updatedComplaints = complaints.map((complaint) =>
+      complaint.id === id
+        ? { ...complaint, views: complaint.views + 1 }
+        : complaint
+    );
+    setComplaints(updatedComplaints);
+  };
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -47,13 +69,19 @@ export default function Home() {
             headerTitleStyle: {
               fontWeight: 'bold',
             },
-            headerTitle: () => <Text />,
+            headerTitle: () => (
+              <View style={{ marginLeft: 25 }}>
+                <Text style={{ color: '#fff' }}>
+                  <Text onPress={() => changeLanguage('ps')}>پشتو</Text> |{' '}
+                  <Text onPress={() => changeLanguage('fa')}>فارسی</Text>
+                </Text>
+              </View>
+            ),
             headerRight: () => (
               <View
                 style={{
-                  marginRight: 25,
                   display: 'flex',
-                  flexDirection: 'row',
+                  flexDirection: 'row-reverse',
                   alignItems: 'center',
                 }}
               >
@@ -75,22 +103,14 @@ export default function Home() {
                 <LogoTitle />
               </View>
             ),
-            headerLeft: () => (
-              <View style={{ marginLeft: 25 }}>
-                <Text style={{ color: '#fff' }}>
-                  <Text onPress={() => changeLanguage('ps')}>پشتو</Text> |{' '}
-                  <Text onPress={() => changeLanguage('fa')}>فارسی</Text>
-                </Text>
-              </View>
-            ),
           }}
         />
-        <ScrollView style={{ flex: 1, paddingBottom: 70 }}>
+        <ScrollView style={{ flex: 1, marginBottom: 50 }}>
           <HeaderSlider />
           <View
             style={{
               display: 'flex',
-              flexDirection:'row',
+              flexDirection: 'row',
               justifyContent: 'center',
               width: '100%',
               padding: 8,
@@ -113,9 +133,24 @@ export default function Home() {
             </Text>
           </View>
 
-          {complaints.map((complaint) => (
-            <ComplaintCard key={complaint.id} complaint={complaint} />
+          {complaints?.map((complaint) => (
+            <ComplaintCard
+              key={complaint.id}
+              complaint={complaint}
+              updateComplaintViews={handleComplaintViewUpdate}
+            />
           ))}
+          {totalPages > 1 && (
+            <View style={{ marginBottom: 50 }}>
+              <Pagination
+                hasPrev={hasPrev}
+                hasNext={hasNext}
+                currentPage={currentPage}
+                setCurrentPage={setCurrentPage}
+                totalPages={totalPages}
+              />
+            </View>
+          )}
         </ScrollView>
         <BottomNavigation />
       </View>

@@ -1,11 +1,8 @@
 import React from 'react';
-import { Link } from 'expo-router';
 import {
   View,
   StyleSheet,
   TouchableOpacity,
-  Text,
-  Pressable,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons'; // Make sure to install expo vector icons
