@@ -102,9 +102,7 @@ export default function ComplaintForm() {
         (response) => {
           if (response.status === 201) {
             router.replace('/');
-          } else {
-            console.log(response);
-          }
+          } 
         },
         (error) => {
           console.log(error);

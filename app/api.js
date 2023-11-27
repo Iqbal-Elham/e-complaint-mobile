@@ -1,8 +1,10 @@
 import axios from 'axios';
 import { get_type } from './utils';
 
+const baseURL = 'http://172.30.10.104:8000/api/'
+
 const api = axios.create({
-  baseURL: 'http://172.20.10.11:8000/api/',
+  baseURL,
   headers: { Accept: 'application/json' },
 });
 
@@ -55,7 +57,7 @@ const createComplaint = async (rawData) => {
   const data = await createFormData(rawData);
   try {
     const response = await axios.post(`complaints/`, data, {
-      baseURL: 'http://172.20.10.11:8000/api/',
+      baseURL,
       headers: {
         'Content-Type': 'multipart/form-data',
       },

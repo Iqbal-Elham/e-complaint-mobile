@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Image, Text, View, ScrollView, TouchableOpacity } from "react-native";
-import { Stack } from "expo-router";
+import { Stack, useNavigation } from "expo-router";
 import ComplaintCard from "./components/ComplaintCard";
 import HeaderSlider from "./components/HeaderSlider";
 import { I18nManager } from "react-native";
@@ -29,6 +29,7 @@ export default function Home() {
   const [totalPages, setTotalPages] = useState(0);
   const [hasPrev, setHasPrev] = useState(false);
   const [hasNext, setHasNext] = useState(false);
+  const navigation = useNavigation()
   const itemsPerPage = 6;
 
   const { t, i18n } = useTranslation();
@@ -81,18 +82,18 @@ export default function Home() {
                   gap: 20,
                 }}
               >
+                <Text
+                  style={{ color: "#fff" }}
+                  onPress={() =>
+                    navigation.navigate('AboutUs')
+                  }
+                >
+                  {t('about-us')}
+                </Text>
                 <Text style={{ color: "#fff" }}>
                   <Text onPress={() => changeLanguage("ps")}>پشتو</Text> |{" "}
                   <Text onPress={() => changeLanguage("fa")}>فارسی</Text>
                 </Text>
-                <TouchableOpacity
-                  style={{ color: "#fff" }}
-                  onPress={() =>
-                    navigation.navigate("AboutUs", { name: "در باره ما" })
-                  }
-                >
-                  درباره ما
-                </TouchableOpacity>
               </View>
             ),
             headerRight: () => (

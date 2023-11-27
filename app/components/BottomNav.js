@@ -22,14 +22,6 @@ const BottomNavigation = () => {
       >
           <AntDesign name="plus" size={24} color="white" />
       </TouchableOpacity>
-
-      {/* <TouchableOpacity
-        onPress={() =>
-          navigation.navigate('AboutUs', { name: 'در باره ما' })
-        }
-      >
-         About us
-      </TouchableOpacity> */}
     </View>
   );
 };
