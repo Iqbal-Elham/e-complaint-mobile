@@ -33,6 +33,10 @@
   "complaint_number": "شکایت شماره",
   "unknown": "مشخص نشده",
 
+  "login": "ورود",
+  "register": "ثبت نام",
+  "welcome-text": "به سیستم ثبت شکایات خوش آمدید",
+
   "complaint_type_error": "لطفا یک نوع شکایت را انتخاب نماید",
   "complaint_email_error": "لطفا ایمل خودرا درست وارد نماید",
   "complaint_phone_number_error": "07xxxxxxxx شماره باید اینگونه باشد",

@@ -29,6 +29,10 @@
   "placeholder_email": "خپل ایمیل ورکړئ (اختیاري)",
   "placeholder_phoneNumber": "خپل تماس شمیره ورکړئ (اختیاري)",
   "complaint_type": "خپل شکایت د روښاني نوعه وټاکئ",
+  
+  "login": "ورود",
+  "register": "راجستر",
+  "welcome-text": "د شکایت ثبتولو سیسټم ته ښه راغلاست",
 
   "ministry_brand": "د کورنیو چارو وزارت",
   "save_complaint": "د شکایتونو ثبتول",

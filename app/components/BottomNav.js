@@ -3,6 +3,7 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
+  Text
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons'; // Make sure to install expo vector icons
@@ -15,12 +16,31 @@ const BottomNavigation = () => {
   return (
     <View style={styles.container}>
       <TouchableOpacity
+        
+        onPress={() =>
+          navigation.navigate('Login', { name: t('newComplaint') })
+        }
+      >
+          <Text style={styles.otherButtons}>
+            ورود
+          </Text>
+      </TouchableOpacity>
+      <TouchableOpacity
         style={styles.plusButton}
         onPress={() =>
           navigation.navigate('ComplaintForm', { name: t('newComplaint') })
         }
       >
           <AntDesign name="plus" size={24} color="white" />
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate('ComplaintForm', { name: t('newComplaint') })
+        }
+      >
+         <Text style={styles.otherButtons}>
+          ثبت نام
+         </Text>
       </TouchableOpacity>
     </View>
   );
@@ -36,6 +56,11 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: '10rem',
   },
   navItem: {
     flex: 1,
@@ -56,6 +81,10 @@ const styles = StyleSheet.create({
     bottom: 10,
     alignSelf: 'center',
   },
+  otherButtons: {
+    color: 'white',
+    fontSize: '18px',
+  }
 });
 
 export default BottomNavigation;
