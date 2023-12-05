@@ -36,6 +36,7 @@
   "login": "ورود",
   "register": "ثبت نام",
   "welcome-text": "به سیستم ثبت شکایات خوش آمدید",
+  "last-name": "تخلص",
 
   "complaint_type_error": "لطفا یک نوع شکایت را انتخاب نماید",
   "complaint_email_error": "لطفا ایمل خودرا درست وارد نماید",

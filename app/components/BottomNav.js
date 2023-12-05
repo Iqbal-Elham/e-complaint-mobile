@@ -35,7 +35,7 @@ const BottomNavigation = () => {
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() =>
-          navigation.navigate('ComplaintForm', { name: t('newComplaint') })
+          navigation.navigate('Register')
         }
       >
          <Text style={styles.otherButtons}>

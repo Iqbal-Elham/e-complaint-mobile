@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Stack } from "expo-router";
 import { useTranslation } from "react-i18next";
+import { useNavigation } from '@react-navigation/native';
 
 import {
   View,
@@ -11,10 +12,12 @@ import {
   StyleSheet,
 } from "react-native";
 
-const LoginScreen = ({ navigation }) => {
+const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { t } = useTranslation();
+  const navigation = useNavigation();
+  
 
   const handleLogin = () => {
     // Implement your login logic here
@@ -50,7 +53,9 @@ const LoginScreen = ({ navigation }) => {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.registerButton}
-          onPress={() => navigation.navigate("Register")}
+          onPress={() =>
+            navigation.navigate('Register')
+          }
         >
           <Text style={styles.buttonText}>{t("register")}</Text>
         </TouchableOpacity>
@@ -111,4 +116,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginScreen;
+export default Login;
