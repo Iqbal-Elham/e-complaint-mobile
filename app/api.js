@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { get_type } from './utils';
 
-const baseURL = 'http://172.30.10.104:8000/api/'
+const baseURL = 'http://172.30.10.55:8000/api/'
 
 const api = axios.create({
   baseURL,

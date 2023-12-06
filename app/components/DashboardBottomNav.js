@@ -6,10 +6,10 @@ import {
   Text
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { AntDesign } from '@expo/vector-icons'; 
+import { AntDesign } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 
-const BottomNavigation = () => {
+const DashboardBottomNav = () => {
   const navigation = useNavigation();
   const { t } = useTranslation();
 
@@ -22,16 +22,8 @@ const BottomNavigation = () => {
         }
       >
           <Text style={styles.otherButtons}>
-            {t('login')}/{t('register')}
+            خروج
           </Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.plusButton}
-        onPress={() =>
-          navigation.navigate('ComplaintForm', { name: t('newComplaint') })
-        }
-      >
-          <AntDesign name="plus" size={24} color="white" />
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() =>
@@ -60,7 +52,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: '9rem',
+    gap: '10rem',
   },
   navItem: {
     flex: 1,
@@ -87,4 +79,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default BottomNavigation;
+export default DashboardBottomNav;
