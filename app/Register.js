@@ -9,24 +9,30 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
-import { Stack } from "expo-router";
+import { Stack, router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
+import { register } from "./api";
 
 const RegisterScreen = () => {
   const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [username, setUsername] = useState("");
+  const [first_name, setFirstname] = useState("");
+  const [last_name, setLastName] = useState("");
   const [password, setPassword] = useState("");
   const { t } = useTranslation();
   const navigation = useNavigation();
 
   const handleRegister = () => {
-    // Implement your registration logic here
-    console.log("Email:", email);
-    console.log("Name:", name);
-    console.log("Last Name:", lastName);
-    console.log("Password:", password);
+    register({
+      username,
+      password,
+      email,
+      first_name,
+      last_name,
+      callback: ()=>router.replace('/')
+    })
+    
   };
 
   return (
@@ -40,14 +46,20 @@ const RegisterScreen = () => {
       <View style={styles.formContainer}>
         <Text style={styles.title}>{t("welcome-text")}</Text>
         <TextInput
+          placeholder={t("username")}
+          value={username}
+          onChangeText={(text) => setUsername(text)}
+          style={styles.input}
+        />
+        <TextInput
           placeholder={t("name")}
-          value={name}
-          onChangeText={(text) => setName(text)}
+          value={first_name}
+          onChangeText={(text) => setFirstname(text)}
           style={styles.input}
         />
         <TextInput
           placeholder={t("last-name")}
-          value={lastName}
+          value={last_name}
           onChangeText={(text) => setLastName(text)}
           style={styles.input}
         />

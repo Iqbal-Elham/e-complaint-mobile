@@ -1,49 +1,53 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   Image,
   Text,
   View,
   ScrollView,
   TouchableOpacity,
+  TouchableHighlight,
+  FlatList,
   StyleSheet,
-} from "react-native";
-import { Link, Stack, useNavigation } from "expo-router";
-import ComplaintCard from "./components/ComplaintCard";
-import HeaderSlider from "./components/HeaderSlider";
-import { I18nManager } from "react-native";
-import BottomNavigation from "./components/BottomNav";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import "../i18n";
-import { useTranslation } from "react-i18next";
-import { fetchComplaints } from "./api";
-import Pagination from "./components/Pagination";
-import DashboardBottomNav from "./components/DashboardBottomNav";
+} from 'react-native';
+import { Link, Stack, useNavigation } from 'expo-router';
+import ComplaintCard from './components/ComplaintCard';
+import HeaderSlider from './components/HeaderSlider';
+import { I18nManager } from 'react-native';
+import BottomNavigation from './components/BottomNav';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import '../i18n';
+import { useTranslation } from 'react-i18next';
+import { fetchComplaints } from './api';
+import Pagination from './components/Pagination';
+import DashboardBottomNav from './components/DashboardBottomNav';
+import { DataTable } from 'react-native-paper';
 
 function LogoTitle() {
   return (
     <Image
       style={{ width: 50, height: 50 }}
-      source={require("../assets/images/logo.png")}
+      source={require('../assets/images/logo.png')}
     />
   );
 }
 
 const tableData = [
-  { id: 1, name: "شکایت اول", status: "حل شده" },
-  { id: 2, name: "شکایت دوم", status: "تحت بررسی" },
-  { id: 3, name: "شکایت سوم", status: "دریافت شده" },
+  { id: 1, name: 'شکایت اول', status: 'حل شده' },
+  { id: 2, name: 'شکایت دوم', status: 'تحت بررسی' },
+  { id: 3, name: 'شکایت سوم', status: 'دریافت شده' },
+  { id: 3, name: 'شکایت سوم', status: 'دریافت شده' },
 ];
 
-const getStatusColor = (status) => {
-  switch (status) {
-    case "حل شده":
-      return "rgb(34 231 34)";
-    case "تحت بررسی":
-      return "rgb(235 221 30)";
-    case "دریافت شده":
-      return "rgb(29 219 203)";
+const getStatusColor = (state) => {
+  switch (state) {
+    case 'resolved':
+      return 'rgb(34 231 34)';
+    case 'under_investigation':
+      return 'rgb(235 221 30)';
+    case 'received':
+      return 'rgb(29 219 203)';
     default:
-      return "black";
+      return 'black';
   }
 };
 
@@ -89,50 +93,50 @@ export default function Home() {
       <View style={{ flex: 1 }}>
         <Stack.Screen
           options={{
-            title: "My home",
-            headerTintColor: "#fff",
+            title: 'My home',
+            headerTintColor: '#fff',
             headerTitleStyle: {
-              fontWeight: "bold",
+              fontWeight: 'bold',
             },
 
             headerTitle: () => (
               <View
                 style={{
                   marginLeft: 5,
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "center",
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                   gap: 20,
                 }}
               >
-                <Text style={{ color: "#fff" }}>
-                  <Text onPress={() => changeLanguage("ps")}>پشتو</Text> |{" "}
-                  <Text onPress={() => changeLanguage("fa")}>فارسی</Text>
+                <Text style={{ color: '#fff' }}>
+                  <Text onPress={() => changeLanguage('ps')}>پشتو</Text> |{' '}
+                  <Text onPress={() => changeLanguage('fa')}>فارسی</Text>
                 </Text>
               </View>
             ),
             headerRight: () => (
               <View
                 style={{
-                  display: "flex",
-                  flexDirection: "row-reverse",
-                  alignItems: "center",
+                  display: 'flex',
+                  flexDirection: 'row-reverse',
+                  alignItems: 'center',
                 }}
               >
                 <View
                   style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
                     gap: 4,
                   }}
                 >
-                  <Text style={{ color: "white", marginHorizontal: 5 }}>
-                    {t("ministry_brand")}
+                  <Text style={{ color: 'white', marginHorizontal: 5 }}>
+                    {t('ministry_brand')}
                   </Text>
-                  <Text style={{ color: "white", marginHorizontal: 5 }}>
-                    {t("save_complaint")}
+                  <Text style={{ color: 'white', marginHorizontal: 5 }}>
+                    {t('save_complaint')}
                   </Text>
                 </View>
                 <LogoTitle />
@@ -143,40 +147,43 @@ export default function Home() {
         <ScrollView style={{ flex: 1, marginBottom: 50 }}>
           <View
             style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "center",
-              width: "100%",
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'center',
+              width: '100%',
               padding: 8,
             }}
           >
             <Text
               style={{
-                textAlign: "center",
+                textAlign: 'center',
                 fontSize: 28,
-                backgroundColor: "#4cc3e0",
-                width: "100%",
+                backgroundColor: '#4cc3e0',
+                width: '100%',
                 padding: 5,
-                color: "white",
+                color: 'white',
                 borderBottomRightRadius: 10,
                 borderBottomLeftRadius: 10,
                 borderTopWidth: 1,
               }}
             >
-              {t("dashboard")}
+              {t('dashboard')}
             </Text>
           </View>
 
           {/* ------------------------------------------------------------------------------------ */}
 
-          <View style={styles.container}>
+          {/* <View style={styles.container}>
             <View style={styles.headerRow}>
-              <Text style={styles.headerText}>حالت</Text>
-              <Text style={styles.headerText}>نوع شکایت</Text>
               <Text style={styles.headerText}>شماره</Text>
+              <Text style={styles.headerText}>نوع شکایت</Text>
+              <Text style={styles.headerText}>حالت</Text>
             </View>
             {tableData.map((item) => (
               <View key={item.id} style={styles.row}>
+                      <Text style={[{ textAlign: "right", width: "50px" }]}>
+                        {item.id}
+                      </Text>
                 <View style={{width: "40%"}}>
                   <Text
                     style={{
@@ -203,12 +210,81 @@ export default function Home() {
                 >
                   <Text style={{}}>{item.name}</Text>
                 </Link>
-                <Text style={[{ textAlign: "right", width: "50px" }]}>
-                  {item.id}
-                </Text>
               </View>
             ))}
-          </View>
+          </View> */}
+
+          <DataTable>
+            <DataTable.Header>
+              <DataTable.Title>
+                <Text
+                  style={{
+                    color: 'black',
+                    fontSize: 18,
+                    fontWeight: 'bold',
+                    textAlign: 'center',
+                  }}
+                >
+                  شماره
+                </Text>
+              </DataTable.Title>
+              <DataTable.Title>
+                <Text
+                  style={{
+                    color: 'black',
+                    fontSize: 18,
+                    fontWeight: 'bold',
+                    textAlign: 'center',
+                  }}
+                >
+                  نام
+                </Text>
+              </DataTable.Title>
+              <DataTable.Title>
+                <Text
+                  style={{
+                    color: 'black',
+                    fontSize: 18,
+                    fontWeight: 'bold',
+                    textAlign: 'center',
+                  }}
+                >
+                  حالت
+                </Text>
+              </DataTable.Title>
+            </DataTable.Header>
+
+            {complaints.map((complaint, index) => (
+              <DataTable.Row key={index}>
+                <DataTable.Cell>{complaint.id}</DataTable.Cell>
+                <DataTable.Cell>
+                  <Link
+                    href={{
+                      pathname: 'details',
+                      params: {
+                        name: 'شکایت اول',
+                        complaint_id: complaint.id,
+                      },
+                    }}
+                  >
+                    {t(complaint.complaint_type)}
+                  </Link>
+                </DataTable.Cell>
+                <DataTable.Cell>
+                  <Text
+                    style={{
+                      backgroundColor: getStatusColor(complaint.state),
+                      textAlign: 'center',
+                      width: '70%',
+                      borderRadius: 12,
+                    }}
+                  >
+                    {t(complaint.state)}
+                  </Text>
+                </DataTable.Cell>
+              </DataTable.Row>
+            ))}
+          </DataTable>
 
           {/* ------------------------------------------------------------------------------------ */}
           {totalPages > 1 && (
@@ -233,32 +309,32 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    textAlign: "right",
+    textAlign: 'right',
   },
   headerRow: {
-    flexDirection: "row",
-    backgroundColor: "lightgray",
+    flexDirection: 'row',
+    backgroundColor: 'lightgray',
     padding: 10,
     borderRadius: 5,
     marginBottom: 10,
   },
   headerText: {
     flex: 1,
-    fontWeight: "bold",
-    textAlign: "right",
+    fontWeight: 'bold',
+    textAlign: 'right',
   },
   row: {
-    display: "flex",
-    flexDirection: "row",
+    display: 'flex',
+    flexDirection: 'row',
     padding: 10,
     borderRadius: 5,
     marginBottom: 10,
   },
   cell: {
-    display: "flex",
-    justifyContent: "flex-end",
-    width: "100%",
-    textAlign: "right",
-    backgroundColor: "yellow",
+    display: 'flex',
+    justifyContent: 'flex-end',
+    width: '100%',
+    textAlign: 'right',
+    backgroundColor: 'yellow',
   },
 });

@@ -1,46 +1,53 @@
 import React from 'react';
-import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Text
-} from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { AntDesign } from '@expo/vector-icons'; 
+import { AntDesign } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { useToken } from '../utils';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const BottomNavigation = () => {
   const navigation = useNavigation();
   const { t } = useTranslation();
+  const token = useToken();
+  const router = useRouter();
 
+  const handleLogout = () => {
+    AsyncStorage.removeItem('token')
+    router.replace('/')
+  }
+  
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        
+      {token ?   <TouchableOpacity
+        onPress={handleLogout}
+      >
+        <Text style={styles.otherButtons}>
+          {t('logout')}
+        </Text>
+      </TouchableOpacity> : 
+        <TouchableOpacity
         onPress={() =>
           navigation.navigate('Login', { name: t('newComplaint') })
         }
       >
-          <Text style={styles.otherButtons}>
-            {t('login')}/{t('register')}
-          </Text>
-      </TouchableOpacity>
+        <Text style={styles.otherButtons}>
+          {t('login')}/{t('register')}
+        </Text>
+      </TouchableOpacity>}
       <TouchableOpacity
         style={styles.plusButton}
         onPress={() =>
-          navigation.navigate('ComplaintForm', { name: t('newComplaint') })
+          token
+            ? navigation.navigate('ComplaintForm', { name: t('newComplaint') })
+            : navigation.navigate('Login')
         }
       >
-          <AntDesign name="plus" size={24} color="white" />
+        <AntDesign name="plus" size={24} color="white" />
       </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() =>
-          navigation.navigate('Dashboard')
-        }
-      >
-         <Text style={styles.otherButtons}>
-          حساب کاربری
-         </Text>
+      <TouchableOpacity onPress={() => navigation.navigate('Dashboard')}>
+        <Text style={styles.otherButtons}></Text>
       </TouchableOpacity>
     </View>
   );
@@ -60,7 +67,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: '9rem',
+    gap: 149,
   },
   navItem: {
     flex: 1,
@@ -83,8 +90,8 @@ const styles = StyleSheet.create({
   },
   otherButtons: {
     color: 'white',
-    fontSize: '18px',
-  }
+    fontSize: 18,
+  },
 });
 
 export default BottomNavigation;

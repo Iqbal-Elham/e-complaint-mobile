@@ -1,21 +1,22 @@
-import React, { useEffect, useState } from "react";
-import { Image, Text, View, ScrollView, TouchableOpacity } from "react-native";
-import { Stack, useNavigation } from "expo-router";
-import ComplaintCard from "./components/ComplaintCard";
-import HeaderSlider from "./components/HeaderSlider";
-import { I18nManager } from "react-native";
-import BottomNavigation from "./components/BottomNav";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import "../i18n";
-import { useTranslation } from "react-i18next";
-import { fetchComplaints } from "./api";
-import Pagination from "./components/Pagination";
+import React, { useEffect, useState } from 'react';
+import { Image, Text, View, ScrollView, TouchableOpacity } from 'react-native';
+import { Stack, useNavigation } from 'expo-router';
+import ComplaintCard from './components/ComplaintCard';
+import HeaderSlider from './components/HeaderSlider';
+import { I18nManager } from 'react-native';
+import BottomNavigation from './components/BottomNav';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import '../i18n';
+import { useTranslation } from 'react-i18next';
+import { fetchComplaints } from './api';
+import Pagination from './components/Pagination';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function LogoTitle() {
   return (
     <Image
       style={{ width: 50, height: 50 }}
-      source={require("../assets/images/logo.png")}
+      source={require('../assets/images/logo.png')}
     />
   );
 }
@@ -29,7 +30,7 @@ export default function Home() {
   const [totalPages, setTotalPages] = useState(0);
   const [hasPrev, setHasPrev] = useState(false);
   const [hasNext, setHasNext] = useState(false);
-  const navigation = useNavigation()
+  const navigation = useNavigation();
   const itemsPerPage = 6;
 
   const { t, i18n } = useTranslation();
@@ -65,58 +66,56 @@ export default function Home() {
       <View style={{ flex: 1 }}>
         <Stack.Screen
           options={{
-            title: "My home",
-            headerTintColor: "#fff",
+            title: 'My home',
+            headerTintColor: '#fff',
             headerTitleStyle: {
-              fontWeight: "bold",
+              fontWeight: 'bold',
             },
-
-            headerTitle: () => (
+            headerTitle: () => null,
+            headerLeft: () => (
               <View
                 style={{
                   marginLeft: 5,
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "center",
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                   gap: 20,
                 }}
               >
                 <Text
-                  style={{ color: "#fff" }}
-                  onPress={() =>
-                    navigation.navigate('AboutUs')
-                  }
+                  style={{ color: '#fff' }}
+                  onPress={() => navigation.navigate('AboutUs')}
                 >
                   {t('about-us')}
                 </Text>
-                <Text style={{ color: "#fff" }}>
-                  <Text onPress={() => changeLanguage("ps")}>پشتو</Text> |{" "}
-                  <Text onPress={() => changeLanguage("fa")}>فارسی</Text>
+                <Text style={{ color: '#fff' }}>
+                  <Text onPress={() => changeLanguage('ps')}>پشتو</Text> |{' '}
+                  <Text onPress={() => changeLanguage('fa')}>فارسی</Text>
                 </Text>
               </View>
             ),
             headerRight: () => (
               <View
                 style={{
-                  display: "flex",
-                  flexDirection: "row-reverse",
-                  alignItems: "center",
+                  display: 'flex',
+                  flexDirection: 'row-reverse',
+                  alignItems: 'center',
                 }}
               >
                 <View
                   style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
                     gap: 4,
                   }}
                 >
-                  <Text style={{ color: "white", marginHorizontal: 5 }}>
-                    {t("ministry_brand")}
+                  <Text style={{ color: 'white', marginHorizontal: 5 }}>
+                    {t('ministry_brand')}
                   </Text>
-                  <Text style={{ color: "white", marginHorizontal: 5 }}>
-                    {t("save_complaint")}
+                  <Text style={{ color: 'white', marginHorizontal: 5 }}>
+                    {t('save_complaint')}
                   </Text>
                 </View>
                 <LogoTitle />
@@ -128,27 +127,27 @@ export default function Home() {
           <HeaderSlider />
           <View
             style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "center",
-              width: "100%",
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'center',
+              width: '100%',
               padding: 8,
             }}
           >
             <Text
               style={{
-                textAlign: "center",
+                textAlign: 'center',
                 fontSize: 28,
-                backgroundColor: "#4cc3e0",
-                width: "100%",
+                backgroundColor: '#4cc3e0',
+                width: '100%',
                 padding: 5,
-                color: "white",
+                color: 'white',
                 borderBottomRightRadius: 10,
                 borderBottomLeftRadius: 10,
                 borderTopWidth: 1,
               }}
             >
-              {t("complaints")}
+              {t('complaints')}
             </Text>
           </View>
 

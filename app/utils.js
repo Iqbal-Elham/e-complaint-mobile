@@ -1,3 +1,6 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useState } from 'react';
+
 const get_type = (name) => {
   if (!name) return null;
   const extension = name.split('.').pop();
@@ -14,4 +17,13 @@ const get_type = (name) => {
   return type;
 };
 
-export { get_type };
+const useToken = () => {
+  const [token, setToken] = useState(null);
+
+  AsyncStorage.getItem('token').then((token) => {
+    setToken(token);
+  });
+  return token;
+};
+
+export { get_type, useToken };

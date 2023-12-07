@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -12,15 +12,22 @@ import {
 import { Picker } from '@react-native-picker/picker';
 import * as ImagePicker from 'expo-image-picker';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import {
+  Stack,
+  useLocalSearchParams,
+  useNavigation,
+  useRouter,
+} from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { createComplaint } from './api';
 import { get_type } from './utils';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function ComplaintForm() {
   const params = useLocalSearchParams();
   const { t } = useTranslation();
   const [errors, setErrors] = useState({});
+  const expo_navigation = useNavigation();
   const router = useRouter();
 
   const [formData, setFormData] = useState({
@@ -76,7 +83,7 @@ export default function ComplaintForm() {
     setErrors({});
     const emailRegex =
       /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-    const afghanistanPhoneRegex = /^07\d{8}$/
+    const afghanistanPhoneRegex = /^07\d{8}$/;
 
     let newErrors = {};
     if (formData.email) {
@@ -102,7 +109,7 @@ export default function ComplaintForm() {
         (response) => {
           if (response.status === 201) {
             router.replace('/');
-          } 
+          }
         },
         (error) => {
           console.log(error);
@@ -140,7 +147,7 @@ export default function ComplaintForm() {
           />
         </View>
         {errors.complaint_phone_number_error && (
-          <Text style={{ color: 'red', marginBottom: 20 ,alignSelf:'fle'}}>
+          <Text style={{ color: 'red', marginBottom: 20, alignSelf: 'fle' }}>
             {t('complaint_phone_number_error')}
           </Text>
         )}

@@ -1,7 +1,9 @@
 import axios from 'axios';
 import { get_type } from './utils';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRouter } from 'expo-router';
 
-const baseURL = 'http://172.30.10.55:8000/api/'
+const baseURL = 'http://172.30.10.104:8000/api/';
 
 const api = axios.create({
   baseURL,
@@ -69,10 +71,68 @@ const createComplaint = async (rawData) => {
   }
 };
 
+const login = async ({ username, password, callback }) => {
+  axios
+    .post(
+      `${baseURL}login/`,
+      {
+        username,
+        password,
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    )
+    .then(async (response) => {
+      await AsyncStorage.setItem('token', response.data?.token);
+      callback?.();
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+const register = async ({
+  username,
+  email,
+  first_name,
+  last_name,
+  password,
+  callback,
+}) => {
+  axios
+    .post(
+      `${baseURL}users/`,
+      {
+        username,
+        password,
+        first_name,
+        last_name,
+        email,
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    )
+    .then(async (response) => {
+      await AsyncStorage.setItem('token', response.data?.token);
+      callback?.();
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
 export {
   fetchComplaints,
   fetchComplaint,
   createComplaint,
-  api,
   fetchFileFromUri,
+  login,
+  api,
+  register
 };

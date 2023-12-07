@@ -24,6 +24,7 @@
   "upload_file": "فایل اپلوډ کړئ",
   "placeholder_title": "شکایت عنوان دی اداره کړئ",
   "placeholder_description": "د خپل شکایت په باره کی وروسته توضیح ولرئ",
+  "logout": "وتل",
 
   "placeholder_name": "خپل نوم ورکړئ (اختیاري)",
   "placeholder_email": "خپل ایمیل ورکړئ (اختیاري)",
@@ -33,6 +34,9 @@
   "login": "ورود",
   "register": "راجستر",
   "welcome-text": "د شکایت ثبتولو سیسټم ته ښه راغلاست",
+  "received": "ترلاسه کول",
+  "under_investigation": "د پلټنې لاندې",
+  "resolved": "حل شوی",
   
 
   "ministry_brand": "د کورنیو چارو وزارت",
