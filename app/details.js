@@ -13,14 +13,15 @@ import { MaterialIcons } from '@expo/vector-icons';
 
 import { useTranslation } from 'react-i18next';
 import { Video, ResizeMode } from 'expo-av';
-import { fetchComplaint } from './api';
-import { get_type } from './utils';
+import { fetchComplaint, updateComplaintState } from './api';
+import { get_type, useAuth } from './utils';
 
 export default function Details() {
   const { complaint_id } = useLocalSearchParams();
   const { t } = useTranslation();
 
   const [complaint, setComplaint] = useState({});
+  const auth = useAuth();
 
   const [fullScreenImage, setFullScreenImage] = useState(null);
 
@@ -37,6 +38,13 @@ export default function Details() {
       setComplaint(response);
     });
   }, []);
+
+  const handleUpdateState = async () => {
+    if (complaint.state !== 'resolved') {
+      const response = await updateComplaintState(complaint?.id, auth?.token);
+      setComplaint(response);
+    }
+  };
 
   function getAttachmentComponent(file, fullScreen = false) {
     const type = get_type(file);
@@ -118,6 +126,25 @@ export default function Details() {
         }}
       />
       <ScrollView style={styles.container}>
+        <Text
+          style={{
+            backgroundColor:
+              complaint.state === 'received'
+                ? '#0c84e0'
+                : complaint.state === 'under_investigation'
+                ? 'orange'
+                : 'springgreen',
+            width: 100,
+            textAlign: 'center',
+            color: 'white',
+            borderRadius: 5,
+            padding: 5,
+            fontWeight: 'bold',
+            marginBottom: 5,
+          }}
+        >
+          {t(complaint.state)}
+        </Text>
         <View
           style={{
             display: 'flex',
@@ -170,7 +197,28 @@ export default function Details() {
             </TouchableOpacity>
           ))}
         </View>
-
+        {auth?.user?.is_admin && (
+          <TouchableOpacity onPress={() => handleUpdateState()}>
+            <Text
+              style={{
+                textAlign: 'center',
+                fontSize: 18,
+                backgroundColor: '#0c84e0',
+                padding: 10,
+                borderRadius: 10,
+                marginTop: 10,
+                color: 'white',
+                opacity: complaint.state === 'resolved' ? 0.7 : 1,
+              }}
+            >
+              {complaint?.state === 'received'
+                ? 'تغیر به تحت بررسی'
+                : complaint?.state === 'under_investigation'
+                ? 'تغیر به حل شده'
+                : 'حل شده'}
+            </Text>
+          </TouchableOpacity>
+        )}
         <Modal
           visible={!!fullScreenImage}
           transparent={true}

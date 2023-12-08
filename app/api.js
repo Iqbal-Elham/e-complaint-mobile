@@ -1,9 +1,9 @@
 import axios from 'axios';
-import { get_type } from './utils';
+import { decodeUser, get_type } from './utils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 
-const baseURL = 'http://172.30.10.104:8000/api/';
+const baseURL = 'http://192.168.43.172:8000/api/';
 
 const api = axios.create({
   baseURL,
@@ -23,8 +23,29 @@ const fetchComplaints = async (itemsPerPage, currentPage) => {
   }
 };
 
+const fetchMyComplaints = async (itemsPerPage, currentPage, token = null) => {
+  try {
+    const response = await api.get(
+      `complaints/my_complaints/?limit=${itemsPerPage}&offset=${
+        (currentPage - 1) * itemsPerPage
+      }`,
+      { headers: { Authorization: 'Bearer ' + token } }
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const fetchComplaint = async (id) => {
   const response = await api.get(`complaints/${id}/`);
+  return response.data;
+};
+
+const fetchNotifications = async (token) => {
+  const response = await api.get(`notifications/`, {
+    headers: { Authorization: 'Bearer ' + token },
+  });
   return response.data;
 };
 
@@ -57,16 +78,38 @@ async function createFormData(data) {
 
 const createComplaint = async (rawData) => {
   const data = await createFormData(rawData);
+  const auth = await AsyncStorage.getItem('auth');
+  const token = JSON.parse(auth)?.token;
   try {
     const response = await axios.post(`complaints/`, data, {
       baseURL,
       headers: {
         'Content-Type': 'multipart/form-data',
+        Authorization: 'Bearer ' + token,
       },
     });
 
     return response;
   } catch (error) {
+    return error;
+  }
+};
+
+const updateComplaintState = async (id, token) => {
+  try {
+    const response = await api.post(
+      `complaints/${id}/update_state/`,
+      {},
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token,
+        },
+      }
+    );
+    return response?.data;
+  } catch (error) {
+    console.log(error.response);
     return error;
   }
 };
@@ -86,7 +129,12 @@ const login = async ({ username, password, callback }) => {
       }
     )
     .then(async (response) => {
-      await AsyncStorage.setItem('token', response.data?.token);
+      const token = response.data?.token;
+      const user = decodeUser(token);
+      await AsyncStorage.setItem(
+        'auth',
+        JSON.stringify({ token: token, user: user })
+      );
       callback?.();
     })
     .catch((error) => {
@@ -119,7 +167,12 @@ const register = async ({
       }
     )
     .then(async (response) => {
-      await AsyncStorage.setItem('token', response.data?.token);
+      const token = response.data?.token;
+      const user = decodeUser(token);
+      await AsyncStorage.setItem(
+        'auth',
+        JSON.stringify({ token: token, user: user })
+      );
       callback?.();
     })
     .catch((error) => {
@@ -129,10 +182,13 @@ const register = async ({
 
 export {
   fetchComplaints,
+  fetchMyComplaints,
   fetchComplaint,
   createComplaint,
+  updateComplaintState,
   fetchFileFromUri,
   login,
   api,
-  register
+  register,
+  fetchNotifications,
 };

@@ -10,7 +10,9 @@ import '../i18n';
 import { useTranslation } from 'react-i18next';
 import { fetchComplaints } from './api';
 import Pagination from './components/Pagination';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { jwtDecode } from 'jwt-decode';
+import { useAuth } from './utils';
+import { Buffer } from 'buffer';
 
 function LogoTitle() {
   return (
@@ -34,11 +36,10 @@ export default function Home() {
   const itemsPerPage = 6;
 
   const { t, i18n } = useTranslation();
-
+  const { user } = useAuth();
   const changeLanguage = (language) => {
     i18n.changeLanguage(language);
   };
-
   useEffect(() => {
     fetchComplaints(itemsPerPage, currentPage)
       .then((response) => {
@@ -170,7 +171,7 @@ export default function Home() {
             </View>
           )}
         </ScrollView>
-        <BottomNavigation />
+        <BottomNavigation user={user} />
       </View>
     </GestureHandlerRootView>
   );

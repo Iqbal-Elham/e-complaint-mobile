@@ -1,53 +1,52 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useRouter, useNavigation } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { useToken } from '../utils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const BottomNavigation = () => {
+const BottomNavigation = ({ user = null }) => {
   const navigation = useNavigation();
   const { t } = useTranslation();
-  const token = useToken();
   const router = useRouter();
-
   const handleLogout = () => {
-    AsyncStorage.removeItem('token')
-    router.replace('/')
-  }
-  
+    AsyncStorage.removeItem('auth');
+    router.replace('/');
+  };
+
   return (
     <View style={styles.container}>
-      {token ?   <TouchableOpacity
-        onPress={handleLogout}
-      >
-        <Text style={styles.otherButtons}>
-          {t('logout')}
-        </Text>
-      </TouchableOpacity> : 
+      {user ? (
+        <TouchableOpacity onPress={handleLogout}>
+          <Text style={styles.otherButtons}>{t('logout')}</Text>
+        </TouchableOpacity>
+      ) : (
         <TouchableOpacity
-        onPress={() =>
-          navigation.navigate('Login', { name: t('newComplaint') })
-        }
-      >
-        <Text style={styles.otherButtons}>
-          {t('login')}/{t('register')}
-        </Text>
-      </TouchableOpacity>}
+          onPress={() =>
+            navigation.navigate('Login', { name: t('newComplaint') })
+          }
+        >
+          <Text style={styles.otherButtons}>
+            {t('login')}/{t('register')}
+          </Text>
+        </TouchableOpacity>
+      )}
       <TouchableOpacity
         style={styles.plusButton}
         onPress={() =>
-          token
+          user
             ? navigation.navigate('ComplaintForm', { name: t('newComplaint') })
             : navigation.navigate('Login')
         }
       >
         <AntDesign name="plus" size={24} color="white" />
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate('Dashboard')}>
-        <Text style={styles.otherButtons}></Text>
+      <TouchableOpacity
+        onPress={() => navigation.navigate(user ? 'Dashboard' : 'Login')}
+      >
+        <Text style={styles.otherButtons}>
+          {user?.is_admin ? t('dashboard') : t('my_complaints')}
+        </Text>
       </TouchableOpacity>
     </View>
   );

@@ -17,10 +17,11 @@ import BottomNavigation from './components/BottomNav';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import '../i18n';
 import { useTranslation } from 'react-i18next';
-import { fetchComplaints } from './api';
+import { fetchComplaints, fetchMyComplaints } from './api';
 import Pagination from './components/Pagination';
 import DashboardBottomNav from './components/DashboardBottomNav';
 import { DataTable } from 'react-native-paper';
+import { useAuth } from './utils';
 
 function LogoTitle() {
   return (
@@ -30,13 +31,6 @@ function LogoTitle() {
     />
   );
 }
-
-const tableData = [
-  { id: 1, name: 'شکایت اول', status: 'حل شده' },
-  { id: 2, name: 'شکایت دوم', status: 'تحت بررسی' },
-  { id: 3, name: 'شکایت سوم', status: 'دریافت شده' },
-  { id: 3, name: 'شکایت سوم', status: 'دریافت شده' },
-];
 
 const getStatusColor = (state) => {
   switch (state) {
@@ -57,7 +51,6 @@ export default function Home() {
   const [totalPages, setTotalPages] = useState(0);
   const [hasPrev, setHasPrev] = useState(false);
   const [hasNext, setHasNext] = useState(false);
-  const navigation = useNavigation();
   const itemsPerPage = 6;
 
   const { t, i18n } = useTranslation();
@@ -66,27 +59,34 @@ export default function Home() {
     i18n.changeLanguage(language);
   };
 
-  useEffect(() => {
-    fetchComplaints(itemsPerPage, currentPage)
-      .then((response) => {
-        setComplaints(response?.results);
-        setHasPrev(response?.previous);
-        setHasNext(response?.next);
-        setTotalPages(Math.ceil(response?.count / itemsPerPage));
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [currentPage]);
+  const { token, user } = useAuth();
 
-  const handleComplaintViewUpdate = (id) => {
-    const updatedComplaints = complaints.map((complaint) =>
-      complaint.id === id
-        ? { ...complaint, views: complaint.views + 1 }
-        : complaint
-    );
-    setComplaints(updatedComplaints);
-  };
+  useEffect(() => {
+    if (!token) return;
+    if (user.is_admin) {
+      fetchComplaints(itemsPerPage, currentPage)
+        .then((response) => {
+          setComplaints(response?.results);
+          setHasPrev(response?.previous);
+          setHasNext(response?.next);
+          setTotalPages(Math.ceil(response?.count / itemsPerPage));
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      fetchMyComplaints(itemsPerPage, currentPage, token)
+        .then((response) => {
+          setComplaints(response?.results);
+          setHasPrev(response?.previous);
+          setHasNext(response?.next);
+          setTotalPages(Math.ceil(response?.count / itemsPerPage));
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [currentPage, token]);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -167,52 +167,9 @@ export default function Home() {
                 borderTopWidth: 1,
               }}
             >
-              {t('dashboard')}
+              {user?.is_admin ? t('dashboard') : t('my_complaints')}
             </Text>
           </View>
-
-          {/* ------------------------------------------------------------------------------------ */}
-
-          {/* <View style={styles.container}>
-            <View style={styles.headerRow}>
-              <Text style={styles.headerText}>شماره</Text>
-              <Text style={styles.headerText}>نوع شکایت</Text>
-              <Text style={styles.headerText}>حالت</Text>
-            </View>
-            {tableData.map((item) => (
-              <View key={item.id} style={styles.row}>
-                      <Text style={[{ textAlign: "right", width: "50px" }]}>
-                        {item.id}
-                      </Text>
-                <View style={{width: "40%"}}>
-                  <Text
-                    style={{
-                      backgroundColor: getStatusColor(item.status),
-                      textAlign: "center",
-                      padding: 3,
-                      borderRadius: 15,
-                      width: '90%'
-                    }}
-                  >
-                    {item.status}
-                  </Text>
-                </View>
-                <Link
-                  href={{
-                    pathname: "DetailsDashboard",
-                    params: {
-                      name: "شکایت اول",
-                      //   complaint_id: complaint.id
-                    },
-                  }}
-                  // onPress={() => updateComplaintViews(complaint.id)}
-                  style={{ width: "100%", textAlign: "center" }}
-                >
-                  <Text style={{}}>{item.name}</Text>
-                </Link>
-              </View>
-            ))}
-          </View> */}
 
           <DataTable>
             <DataTable.Header>

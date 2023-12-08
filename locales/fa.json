@@ -37,12 +37,22 @@
   "register": "ثبت نام",
   "welcome-text": "به سیستم ثبت شکایات خوش آمدید",
   "last-name": "تخلص",
-  "dashboard": "حساب کاربری",
+  "dashboard": "داشبورد",
+  "my_complaints": "شکایات من",
 
   "received": "دریافت شده",
   "under_investigation": "تحت تحقیق",
   "resolved": "حل شده",
-  "logout":"خروج",
+  "logout": "خروج",
+  "username": "نام کاربری",
+  "notifications": "اعلامیه ها",
+  "back": "بازگشت",
+
+  "notification_messages": {
+    "received": "شکایت شما با موفقیت ارسال شد",
+    "under_investigation": "شکایت شما در دست تحقیق قرار دارد",
+    "resolved": "شکایت شما حل شده است"
+  },
 
   "complaint_type_error": "لطفا یک نوع شکایت را انتخاب نماید",
   "complaint_email_error": "لطفا ایمل خودرا درست وارد نماید",

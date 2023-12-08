@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Stack, useRouter } from 'expo-router';
+import { Stack, useRouter, useNavigation } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { useNavigation } from '@react-navigation/native';
 
 import {
   View,
@@ -10,6 +9,7 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
+  ScrollView,
 } from 'react-native';
 
 import { login } from './api';
@@ -27,7 +27,7 @@ const Login = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Stack.Screen
         options={{
           title: `${t('login')}`,
@@ -37,7 +37,7 @@ const Login = () => {
       <View style={styles.formContainer}>
         <Text style={styles.title}>{t('welcome-text')}</Text>
         <TextInput
-          placeholder="ایمل"
+          placeholder="نام کاربری"
           value={username}
           onChangeText={(text) => setUsername(text)}
           style={styles.input}
@@ -59,7 +59,7 @@ const Login = () => {
           <Text style={styles.buttonText}>{t('register')}</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
